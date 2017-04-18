@@ -13,7 +13,7 @@ public interface IStatementDAO {
 
     //应该使用泛型
     public Object insert(Object t, int timeOut) throws Exception;
-     
+
     /**
      * 更新一个实体，没有说明对为空的字段是直接跳过，还是默认更新
      * @param t
