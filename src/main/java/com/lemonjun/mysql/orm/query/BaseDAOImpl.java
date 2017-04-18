@@ -18,7 +18,7 @@ public class BaseDAOImpl extends AbstractDAO {
     public BaseDAOImpl(IStatementCreater creater) {
         super.psCreater = creater;
     }
-    
+
     //-----------------------real sql executor-------------------------//
     @Override
     public int countByPreSQL(String sql, int timeOut, Object... param) throws Exception {
