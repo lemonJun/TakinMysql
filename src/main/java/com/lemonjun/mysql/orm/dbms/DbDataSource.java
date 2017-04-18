@@ -37,6 +37,7 @@ import com.lemonjun.mysql.orm.util.MessageAlert;
  * 
  */
 public class DbDataSource extends AbstractDataSource {
+
     private static final Logger logger = LoggerFactory.getLogger(DbDataSource.class);
 
     private String name = "";
@@ -48,7 +49,7 @@ public class DbDataSource extends AbstractDataSource {
     private volatile boolean isAlive = true;
 
     /** set to true if the connection pool has been flagged as shutting down. */
-    protected volatile boolean isShutDown;
+    protected volatile boolean isShutDown = false;
 
     /** Connections available to be taken */
     private TransferQueue<ConnectionWrapper> freeConnections;
@@ -73,6 +74,7 @@ public class DbDataSource extends AbstractDataSource {
     private AtomicBoolean isInit = new AtomicBoolean(false);
 
     private final ReentrantLock releaseLock = new ReentrantLock();
+
     private final ExecutorService releaseExecutor = new ThreadPoolExecutor(1, 1, 1500, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
 
     /**
@@ -104,6 +106,7 @@ public class DbDataSource extends AbstractDataSource {
                 connection.close();
             }
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error("init DbDataSource error" + e);
             this.isAlive = false;
         }
@@ -154,13 +157,16 @@ public class DbDataSource extends AbstractDataSource {
     }
 
     /**
+     * 
      * 断定数据库是活的
      * 
      * @throws SQLException
      */
     private void assertLive() throws SQLException {
-        if ((!isAlive) || isShutDown)
+        logger.info(String.format("isalive:%s isshutdown:%s", isAlive, isShutDown));
+        if ((!isAlive) || isShutDown) {
             throw new SQLException("SWAP " + this.getName() + " db connection pool is no alive or shutdown!");
+        }
     }
 
     /**
@@ -192,6 +198,7 @@ public class DbDataSource extends AbstractDataSource {
             }
             return connection;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new SQLException("get connection timeout ", e);
         }
     }
@@ -293,7 +300,6 @@ public class DbDataSource extends AbstractDataSource {
      * @return
      */
     public boolean checkLive() {
-
         logger.debug("SWAP BEGIN check DataSource live. NAME: " + name);
         Connection connection = null;
         boolean result = false;
@@ -312,7 +318,7 @@ public class DbDataSource extends AbstractDataSource {
 
         if (result) {
             this.isAlive = true;
-            logger.debug("SWAP END of check live with wrapped." + ", RESULT: " + isAlive + "; NAME: " + name + "; Thread Id: " + Thread.currentThread().getId());
+            logger.info("SWAP END of check live with wrapped." + ", RESULT: " + isAlive + "; NAME: " + name + "; Thread Id: " + Thread.currentThread().getId());
             return result;
         }
 
@@ -354,7 +360,6 @@ public class DbDataSource extends AbstractDataSource {
      * 保持数据库连接池的大小合适
      */
     protected void keepSize() {
-
         long currentTime = System.currentTimeMillis();
         if (currentTime - this.lastReleaseTime < releaseInterval)
             return;
@@ -425,9 +430,9 @@ public class DbDataSource extends AbstractDataSource {
             rs = stmt.executeQuery(checkLiveSQL);
             result = true;
         } catch (SQLException e) {
+            e.printStackTrace();
             result = false;
         }
-
         DbUtils.closeResultSet(rs);
         DbUtils.closeStatement(stmt);
         return result;
@@ -466,17 +471,18 @@ public class DbDataSource extends AbstractDataSource {
             String url = this.config.getConnetionURL();
             String username = this.config.getUsername();
             String password = this.config.getPassword();
+
+            logger.info(String.format("url:%s user:%s pwd:%s", url, username, password));
             connection = DriverManager.getConnection(url, username, password);
             lgconnection = new ConnectionWrapper(this, connection);
             updateSize(1);
-
+            
             this.lastReleaseTime = System.currentTimeMillis();
 
             for (int index = 0; index < this.getMonitors().size(); index++) {
                 DbMonitor monitor = this.getMonitors().get(index);
                 monitor.onCreate(this, lgconnection);
             }
-
             logger.debug("SWAP Created a new connection by " + this);
         } catch (SQLException e) {
             throw e;
