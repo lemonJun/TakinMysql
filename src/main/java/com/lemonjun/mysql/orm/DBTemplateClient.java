@@ -32,136 +32,120 @@ public class DBTemplateClient implements DBOperations {
     public ConnectionHelper connHelper;//
 
     private static final ThreadLocal<LocalParam> localParams = new ThreadLocal<LocalParam>();
-    
+
     protected int qurryTimeOut = 2;
-    protected int insertUpdateTimeOut = 5;
+    protected int insertUpdateTimeOut = 3;
 
-    private static final DBTemplateClient proxy = new DBTemplateClient();
-
-    public DBTemplateClient() {
-    }
-
-    public static DBTemplateClient init(String configPath) throws Exception {
+    public DBTemplateClient(String configPath) throws Exception {
         ConnectionHelper ch = new ConnectionHelper(configPath);
         AbstractDAO sqlDAO = null;
         IStatementCreater creater = new MysqlPSCreater();
         sqlDAO = new BaseDAOImpl(creater);
         sqlDAO.setConnHelper(ch);
-        proxy.connHelper = ch;
-        proxy.sql = sqlDAO;
-        proxy.presql = sqlDAO;
+        this.connHelper = ch;
+        this.sql = sqlDAO;
+        this.presql = sqlDAO;
 
         logger.info("init DBTemplateClient success");
-        return proxy;
     }
 
     @Override
     public Object insert(Object t) throws Exception {
-        return sql.insert(t, qurryTimeOut);
+        return sql.insert(t, insertUpdateTimeOut);
     }
 
     @Override
     public void upateEntity(Object t) throws Exception {
-
+        sql.upateEntity(t, insertUpdateTimeOut);
     }
 
     @Override
-    public <I> void updateByID(Class<?> clazz, String updateStatement, I id, int timeOut) throws Exception {
-
+    public <I> void updateByID(Class<?> clazz, String updateStatement, I id) throws Exception {
+        sql.updateByID(clazz, updateStatement, id, insertUpdateTimeOut);
     }
 
     @Override
-    public void updateByWhere(Class<?> clazz, String updateStatement, String condition, int timeOut) throws Exception {
-
+    public void updateByWhere(Class<?> clazz, String updateStatement, String condition) throws Exception {
+        sql.updateByWhere(clazz, updateStatement, condition, insertUpdateTimeOut);
     }
 
     @Override
-    public <I> void deleteByID(Class<?> clazz, I id, int timeOut) throws Exception {
-
+    public <I> void deleteByID(Class<?> clazz, I id) throws Exception {
+        sql.deleteByID(clazz, id, insertUpdateTimeOut);
     }
 
     @Override
-    public <I> void deleteByIDS(Class<?> clazz, I[] ids, int timeOut) throws Exception {
-
+    public <I> void deleteByIDS(Class<?> clazz, I[] ids) throws Exception {
+        sql.deleteByIDS(clazz, ids, insertUpdateTimeOut);
     }
 
     @Override
-    public void deleteByWhere(Class<?> clazz, String condition, int timeOut) throws Exception {
-
+    public void deleteByWhere(Class<?> clazz, String where) throws Exception {
+        sql.deleteByWhere(clazz, where, insertUpdateTimeOut);
     }
 
     @Override
-    public <I> Object getById(Class<?> clazz, I id, int timeOut) throws Exception {
-        return null;
+    public <I> Object getById(Class<?> clazz, I id) throws Exception {
+        return sql.getById(clazz, id, qurryTimeOut);
     }
 
     @Override
-    public <T, I> List<T> getListByIDS(Class<T> clazz, I[] ids, int timeOut) throws Exception {
-        return null;
+    public <T, I> List<T> getListByIDS(Class<T> clazz, I[] ids) throws Exception {
+        return sql.getListByIDS(clazz, ids, qurryTimeOut);
     }
 
     @Override
-    public <T> List<T> getListByWhere(Class<T> clazz, String columns, String condition, String orderBy, String limit, int timeOut) throws Exception {
-        return null;
+    public <T> List<T> getListByWhere(Class<T> clazz, String columns, String where, String orderBy, String limit) throws Exception {
+        return sql.getListByWhere(clazz, columns, where, orderBy, limit, qurryTimeOut);
     }
 
     @Override
-    public <T> List<T> pageListByWhere(Class<T> clazz, String condition, String columns, int page, int pageSize, String orderBy, int timeOut) throws Exception {
-        return null;
+    public <T> List<T> pageListByWhere(Class<T> clazz, String where, String columns, int page, int pageSize, String orderBy) throws Exception {
+        return sql.pageListByWhere(clazz, where, columns, page, pageSize, orderBy, qurryTimeOut);
     }
 
     @Override
-    public int countBySql(Class<?> clazz, String condition, int timeOut) throws Exception {
-        return 0;
+    public int countBySql(Class<?> clazz, String where) throws Exception {
+        return sql.countBySql(clazz, where, qurryTimeOut);
     }
 
     /**
      * 这样是可以实现  只是如果每个方法都这么实现 就有点太low了
      */
     @Override
-    public <T> List<T> getListByPreSQL(Class<T> clazz, String sql, int timeOut, Object... param) throws Exception {
-        beginTransaction();
-        try {
-            List<T> result = this.presql.getListByPreSQL(clazz, sql, timeOut, param);
-            commitTransaction();
-            return result;
-        } catch (Exception e) {
-            rollbackTransaction();
-            throw e;
-        } finally {
-            endTransaction();
-        }
+    public <T> List<T> getListByPreSQL(Class<T> clazz, String sql, Object... param) throws Exception {
+        return presql.getListByPreSQL(clazz, sql, qurryTimeOut, param);
     }
 
     @Override
-    public int execByPreSQL(String presql, int timeOut, Object... param) throws Exception {
-        return 0;
+    public int execByPreSQL(String sql, Object... param) throws Exception {
+        return presql.execByPreSQL(sql, insertUpdateTimeOut, param);
     }
 
     @Override
-    public int countByPreSQL(String sql, int timeOut, Object... params) throws Exception {
-        return 0;
+    public int countByPreSQL(String sql, Object... params) throws Exception {
+        return presql.countByPreSQL(sql, qurryTimeOut, params);
     }
 
-    public DBTemplateClient withTranction(boolean with) {
-        LocalParam param = localParams.get();
-        if (param == null) {
-            param = new LocalParam();
-            localParams.set(param);
-        }
-        param.setWithTranc(with);
-        return proxy;
-    }
-
-    public DBTemplateClient timeOut(int time) {
-        LocalParam param = localParams.get();
-        if (param == null) {
-            param = new LocalParam();
-            localParams.set(param);
-        }
-        param.setTimeout(time);
-        return proxy;
-    }
+    //    public DBTemplateClient withTranction(boolean with) {
+    //        LocalParam param = localParams.get();
+    //        if (param == null) {
+    //            param = new LocalParam();
+    //            localParams.set(param);
+    //        }
+    //        param.setWithTranc(with);
+    //        return proxy;
+    //    }
+    //
+    //    public DBTemplateClient timeOut(int time) {
+    //        LocalParam param = localParams.get();
+    //        if (param == null) {
+    //            param = new LocalParam();
+    //            localParams.set(param);
+    //        }
+    //        param.setTimeout(time);
+    //        return proxy;
+    //    }
 
     public Connection getConn() throws Exception {
         return this.connHelper.get();
@@ -171,12 +155,13 @@ public class DBTemplateClient implements DBOperations {
         this.connHelper.release(conn);
     }
 
-    private void beginTransaction() throws Exception {
+    //事务的级别
+    public void beginTransaction() throws Exception {
         beginTransaction(Connection.TRANSACTION_READ_COMMITTED);
     }
 
     //底层对应的都需要修改
-    private void beginTransaction(int level) throws Exception {
+    public void beginTransaction(int level) throws Exception {
         LocalParam param = localParams.get();
         if (param == null || !param.isWithTranc()) {
             return;
@@ -197,7 +182,7 @@ public class DBTemplateClient implements DBOperations {
     }
 
     //对应的实现都需要修改
-    private void commitTransaction() throws Exception {
+    public void commitTransaction() throws Exception {
         LocalParam param = localParams.get();
         if (param == null || !param.isWithTranc()) {
             return;
@@ -212,7 +197,7 @@ public class DBTemplateClient implements DBOperations {
     }
 
     //改成localparam中就可以
-    private void rollbackTransaction() throws Exception {
+    public void rollbackTransaction() throws Exception {
         LocalParam param = localParams.get();
         if (param == null || !param.isWithTranc()) {
             return;
@@ -230,7 +215,7 @@ public class DBTemplateClient implements DBOperations {
      * 结束事务
      * @throws Exception
      */
-    private void endTransaction() throws Exception {
+    public void endTransaction() throws Exception {
         LocalParam param = localParams.get();
         if (param == null || !param.isWithTranc()) {
             return;

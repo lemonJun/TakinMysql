@@ -34,7 +34,7 @@ public class BDProvider {
                     //                    String dbpath = "E:/myworkspace/git/lemon.mysql.orm/src/test/resources/db.properties";
                     logger.info(dbpath);
                     instance = new BDProvider();
-                    instance.client = DBTemplateClient.init(dbpath);
+                    instance.client = new DBTemplateClient(dbpath);
                     logger.info("init db success");
                 } catch (Exception e) {
                     instance = null;

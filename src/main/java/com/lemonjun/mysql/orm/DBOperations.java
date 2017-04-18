@@ -17,30 +17,30 @@ public interface DBOperations {
 
     public abstract void upateEntity(Object t) throws Exception;
 
-    public abstract <I> void updateByID(Class<?> clazz, String updateStatement, I id, int timeOut) throws Exception;
+    public abstract <I> void updateByID(Class<?> clazz, String updateStatement, I id) throws Exception;
 
-    public abstract void updateByWhere(Class<?> clazz, String updateStatement, String condition, int timeOut) throws Exception;
+    public abstract void updateByWhere(Class<?> clazz, String updateStatement, String where) throws Exception;
 
-    public abstract <I> void deleteByID(Class<?> clazz, I id, int timeOut) throws Exception;
+    public abstract <I> void deleteByID(Class<?> clazz, I id) throws Exception;
 
-    public abstract <I> void deleteByIDS(Class<?> clazz, I[] ids, int timeOut) throws Exception;
+    public abstract <I> void deleteByIDS(Class<?> clazz, I[] ids) throws Exception;
 
-    public abstract void deleteByWhere(Class<?> clazz, String condition, int timeOut) throws Exception;
+    public abstract void deleteByWhere(Class<?> clazz, String where) throws Exception;
 
-    public abstract <I> Object getById(Class<?> clazz, I id, int timeOut) throws Exception;
+    public abstract <I> Object getById(Class<?> clazz, I id) throws Exception;
 
-    public abstract <T, I> List<T> getListByIDS(Class<T> clazz, I[] ids, int timeOut) throws Exception;
+    public abstract <T, I> List<T> getListByIDS(Class<T> clazz, I[] ids) throws Exception;
 
-    public abstract <T> List<T> getListByWhere(Class<T> clazz, String columns, String condition, String orderBy, String limit, int timeOut) throws Exception;
+    public abstract <T> List<T> getListByWhere(Class<T> clazz, String columns, String where, String orderBy, String limit) throws Exception;
 
-    public abstract <T> List<T> pageListByWhere(Class<T> clazz, String condition, String columns, int page, int pageSize, String orderBy, int timeOut) throws Exception;
+    public abstract <T> List<T> pageListByWhere(Class<T> clazz, String where, String columns, int page, int pageSize, String orderBy) throws Exception;
 
-    public abstract int countBySql(Class<?> clazz, String condition, int timeOut) throws Exception;
+    public abstract int countBySql(Class<?> clazz, String where) throws Exception;
 
-    public abstract <T> List<T> getListByPreSQL(Class<T> clazz, String sql, int timeOut, Object... param) throws Exception;
+    public abstract <T> List<T> getListByPreSQL(Class<T> clazz, String sql, Object... param) throws Exception;
 
-    public abstract int execByPreSQL(String presql, int timeOut, Object... param) throws Exception;
-    
-    public abstract int countByPreSQL(String sql, int timeOut, Object... params) throws Exception;
+    public abstract int execByPreSQL(String presql, Object... param) throws Exception;
+
+    public abstract int countByPreSQL(String sql, Object... params) throws Exception;
 
 }

@@ -14,19 +14,19 @@ public class MysqlDaoTest {
 
     private static final Logger logger = LoggerFactory.getLogger(MysqlDaoTest.class);
 
-    public static CategoryBean getCategoryByName(String keyCategory, int groupId) {
-        try {
-            String sql = "select * from kv_entity where qd_name='" + keyCategory + "' and kv_group_id=" + groupId + " limit 1 ";
-            List<CategoryBean> cates = BDProvider.getInst().Client().withTranction(true).timeOut(20 - 0).getListByPreSQL(CategoryBean.class, sql, 5);
-            
-            logger.info(String.format("result size:%s key:%s name:%s sql:%s", cates.size(), cates.get(0).getYc_id(), cates.get(0).getYc_name(), sql));
-            return cates.get(0);
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.error("", e);
-        }
-        return null;
-    }
+    //    public static CategoryBean getCategoryByName(String keyCategory, int groupId) {
+    //        try {
+    //            String sql = "select * from kv_entity where qd_name='" + keyCategory + "' and kv_group_id=" + groupId + " limit 1 ";
+    //            //            List<CategoryBean> cates = BDProvider.getInst().Client().withTranction(true).timeOut(20 - 0).getListByPreSQL(CategoryBean.class, sql, 5);
+    //
+    //            logger.info(String.format("result size:%s key:%s name:%s sql:%s", cates.size(), cates.get(0).getYc_id(), cates.get(0).getYc_name(), sql));
+    //            return cates.get(0);
+    //        } catch (Exception e) {
+    //            e.printStackTrace();
+    //            logger.error("", e);
+    //        }
+    //        return null;
+    //    }
 
     private static final ExecutorService executor = Executors.newFixedThreadPool(10);
 
@@ -38,7 +38,7 @@ public class MysqlDaoTest {
             //                executor.submit(new TThread());
             //            }
             //            Thread.sleep(100000);
-            getCategoryByName("ERP实施顾问", 1);
+            //            getCategoryByName("ERP实施顾问", 1);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

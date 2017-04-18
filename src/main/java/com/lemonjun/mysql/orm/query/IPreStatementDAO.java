@@ -15,7 +15,7 @@ public interface IPreStatementDAO {
     public abstract <T> List<T> getListByPreSQL(Class<T> clazz, String sql, int timeOut, Object... param) throws Exception;
 
     /**-------------------------如批量设置一个删除标记位-----------------*/
-    public abstract int execByPreSQL(String presql, int timeOut, Object... param) throws Exception;
+    public abstract int execByPreSQL(String sql, int timeOut, Object... param) throws Exception;
 
     //通过preparedstatement 计数
     public abstract int countByPreSQL(String sql, int timeOut, Object... params) throws Exception;
