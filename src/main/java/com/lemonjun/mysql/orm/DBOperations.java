@@ -15,31 +15,50 @@ public interface DBOperations {
 
     public abstract Object insert(Object t) throws Exception;
 
-    public abstract void upateEntity(Object t) throws Exception;
+    public abstract void upate(Object t) throws Exception;
 
     public abstract <I> void updateByID(Class<?> clazz, String updateStatement, I id) throws Exception;
 
+    @Deprecated
     public abstract void updateByWhere(Class<?> clazz, String updateStatement, String where) throws Exception;
+
+    public abstract void updateByPreSql(Class<?> clazz, String sql, Object... params) throws Exception;
 
     public abstract <I> void deleteByID(Class<?> clazz, I id) throws Exception;
 
     public abstract <I> void deleteByIDS(Class<?> clazz, I[] ids) throws Exception;
 
+    @Deprecated
     public abstract void deleteByWhere(Class<?> clazz, String where) throws Exception;
+
+    public abstract void deleteByPreSql(Class<?> clazz, String where) throws Exception;
 
     public abstract <I> Object getById(Class<?> clazz, I id) throws Exception;
 
     public abstract <T, I> List<T> getListByIDS(Class<T> clazz, I[] ids) throws Exception;
 
+    public abstract <T> List<T> getAllByLimit(Class<T> clazz, String limit) throws Exception;
+
+    @Deprecated
     public abstract <T> List<T> getListByWhere(Class<T> clazz, String columns, String where, String orderBy, String limit) throws Exception;
 
+    @Deprecated
+    public abstract <T> List<T> getListBySql(Class<T> clazz, String sql) throws Exception;
+
+    public abstract <T> List<T> getListByPreSQL(Class<T> clazz, String sql, Object... params) throws Exception;
+
+    @Deprecated
     public abstract <T> List<T> pageListByWhere(Class<T> clazz, String where, String columns, int page, int pageSize, String orderBy) throws Exception;
 
+    public abstract <T> List<T> pageListByPreSql(Class<T> clazz, String sql, int page, int pageSize, Object... params) throws Exception;
+
+    @Deprecated
+    public abstract int execBySQL(String sql) throws Exception;
+
+    public abstract int execByPreSQL(String presql, Object... params) throws Exception;
+
+    @Deprecated
     public abstract int countBySql(Class<?> clazz, String where) throws Exception;
-
-    public abstract <T> List<T> getListByPreSQL(Class<T> clazz, String sql, Object... param) throws Exception;
-
-    public abstract int execByPreSQL(String presql, Object... param) throws Exception;
 
     public abstract int countByPreSQL(String sql, Object... params) throws Exception;
 

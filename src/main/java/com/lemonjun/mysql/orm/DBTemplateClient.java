@@ -55,7 +55,7 @@ public class DBTemplateClient implements DBOperations {
     }
 
     @Override
-    public void upateEntity(Object t) throws Exception {
+    public void upate(Object t) throws Exception {
         sql.upateEntity(t, insertUpdateTimeOut);
     }
 
@@ -236,4 +236,63 @@ public class DBTemplateClient implements DBOperations {
         }
     }
 
+    @Override
+    public <T> List<T> getAllByLimit(Class<T> clazz, String limit) throws Exception {
+        return sql.getListByWhere(clazz, "", "", "", limit, qurryTimeOut);
+    }
+
+    @Override
+    public void updateByPreSql(Class<?> clazz, String sql, Object... param) throws Exception {
+
+    }
+
+    @Override
+    public void deleteByPreSql(Class<?> clazz, String where) throws Exception {
+
+    }
+
+    @Override
+    public <T> List<T> getListBySql(Class<T> clazz, String sql) throws Exception {
+        return null;
+    }
+
+    @Override
+    public <T> List<T> pageListByPreSql(Class<T> clazz, String sql, int page, int pageSize, Object... param) throws Exception {
+        return null;
+    }
+
+    @Override
+    public int execBySQL(String sql) throws Exception {
+        return 0;
+    }
+
+    final static class Other {
+        private long timeout;
+        private boolean transaction;
+        private boolean printsql;
+
+        public long getTimeout() {
+            return timeout;
+        }
+
+        public void setTimeout(long timeout) {
+            this.timeout = timeout;
+        }
+
+        public boolean isTransaction() {
+            return transaction;
+        }
+
+        public void setTransaction(boolean transaction) {
+            this.transaction = transaction;
+        }
+
+        public boolean isPrintsql() {
+            return printsql;
+        }
+
+        public void setPrintsql(boolean printsql) {
+            this.printsql = printsql;
+        }
+    }
 }
