@@ -476,7 +476,7 @@ public class DbDataSource extends AbstractDataSource {
             connection = DriverManager.getConnection(url, username, password);
             lgconnection = new ConnectionWrapper(this, connection);
             updateSize(1);
-            
+
             this.lastReleaseTime = System.currentTimeMillis();
 
             for (int index = 0; index < this.getMonitors().size(); index++) {

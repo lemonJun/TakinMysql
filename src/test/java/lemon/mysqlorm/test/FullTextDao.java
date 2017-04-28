@@ -18,7 +18,6 @@ public class FullTextDao {
     public void readdao() {
         try {
             List<FullTextSchema> list = BDProvider.getInst().Client().getAllByLimit(FullTextSchema.class, "");
-
             System.out.println(JSON.toJSONString(list));
         } catch (Exception e) {
             e.printStackTrace();
