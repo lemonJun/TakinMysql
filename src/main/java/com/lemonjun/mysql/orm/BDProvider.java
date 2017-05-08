@@ -23,7 +23,7 @@ public class BDProvider {
         return client;
     }
 
-    public static BDProvider getInst() {
+    public  static BDProvider getInst() {
         if (instance == null) {
             synchronized (BDProvider.class) {
                 if (instance != null) {

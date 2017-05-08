@@ -155,7 +155,7 @@ public class DBTemplateClient implements DBOperations {
         this.connHelper.release(conn);
     }
 
-    //事务的级别
+    //事务的级别  默认的隔离级别是  RC
     public void beginTransaction() throws Exception {
         beginTransaction(Connection.TRANSACTION_READ_COMMITTED);
     }

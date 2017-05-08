@@ -7,14 +7,14 @@ import com.lemonjun.mysql.orm.annotation.Table;
 public class FullTextSchema {
 
     @Id
-    private long id;
+    private long id;// 唯一ID
+    private String indexName = "";// 索引名称 同一个配置的索引名称必须一样
+    private int fieldNum; // 字段序号
+    private boolean markLastPos = false;// 是否在倒排中标识出最后一个分词的位置
+    private String fieldName = "";// 字段名称 对参数字段 必须以param开头 方便解析
+    private float fieldBoost = 1.0f;// 字段权重
 
-    private String indexName = "";
-    private int fieldNum;
-    private int fieldType;
-    private String lengthFieldName = "";
-    private String fieldName = "";
-    private String fieldBoost = "";
+    private String fieldLengthName = "";
 
     public long getId() {
         return id;
@@ -40,20 +40,12 @@ public class FullTextSchema {
         this.fieldNum = fieldNum;
     }
 
-    public int getFieldType() {
-        return fieldType;
+    public boolean isMarkLastPos() {
+        return markLastPos;
     }
 
-    public void setFieldType(int fieldType) {
-        this.fieldType = fieldType;
-    }
-
-    public String getLengthFieldName() {
-        return lengthFieldName;
-    }
-
-    public void setLengthFieldName(String lengthFieldName) {
-        this.lengthFieldName = lengthFieldName;
+    public void setMarkLastPos(boolean markLastPos) {
+        this.markLastPos = markLastPos;
     }
 
     public String getFieldName() {
@@ -64,12 +56,20 @@ public class FullTextSchema {
         this.fieldName = fieldName;
     }
 
-    public String getFieldBoost() {
+    public float getFieldBoost() {
         return fieldBoost;
     }
 
-    public void setFieldBoost(String fieldBoost) {
+    public void setFieldBoost(float fieldBoost) {
         this.fieldBoost = fieldBoost;
+    }
+
+    public String getFieldLengthName() {
+        return fieldLengthName;
+    }
+
+    public void setFieldLengthName(String fieldLengthName) {
+        this.fieldLengthName = fieldLengthName;
     }
 
 }
