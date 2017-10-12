@@ -46,7 +46,7 @@ public class DBTemplateClient implements DBOperations {
         this.sql = sqlDAO;
         this.presql = sqlDAO;
 
-        logger.info("init DBTemplateClient success");
+        logger.debug("init DBTemplateClient success");
     }
 
     @Override
@@ -55,33 +55,33 @@ public class DBTemplateClient implements DBOperations {
     }
 
     @Override
-    public void upate(Object t) throws Exception {
-        sql.upateEntity(t, insertUpdateTimeOut);
+    public int upate(Object t) throws Exception {
+        return sql.upateEntity(t, insertUpdateTimeOut);
     }
 
     @Override
-    public <I> void updateByID(Class<?> clazz, String updateStatement, I id) throws Exception {
-        sql.updateByID(clazz, updateStatement, id, insertUpdateTimeOut);
+    public <I> int updateByID(Class<?> clazz, String updateStatement, I id) throws Exception {
+        return sql.updateByID(clazz, updateStatement, id, insertUpdateTimeOut);
     }
 
     @Override
-    public void updateByWhere(Class<?> clazz, String updateStatement, String condition) throws Exception {
-        sql.updateByWhere(clazz, updateStatement, condition, insertUpdateTimeOut);
+    public int updateByWhere(Class<?> clazz, String updateStatement, String condition) throws Exception {
+        return sql.updateByWhere(clazz, updateStatement, condition, insertUpdateTimeOut);
     }
 
     @Override
-    public <I> void deleteByID(Class<?> clazz, I id) throws Exception {
-        sql.deleteByID(clazz, id, insertUpdateTimeOut);
+    public <I> int deleteByID(Class<?> clazz, I id) throws Exception {
+        return sql.deleteByID(clazz, id, insertUpdateTimeOut);
     }
 
     @Override
-    public <I> void deleteByIDS(Class<?> clazz, I[] ids) throws Exception {
-        sql.deleteByIDS(clazz, ids, insertUpdateTimeOut);
+    public <I> int deleteByIDS(Class<?> clazz, I[] ids) throws Exception {
+        return sql.deleteByIDS(clazz, ids, insertUpdateTimeOut);
     }
 
     @Override
-    public void deleteByWhere(Class<?> clazz, String where) throws Exception {
-        sql.deleteByWhere(clazz, where, insertUpdateTimeOut);
+    public int deleteByWhere(Class<?> clazz, String where) throws Exception {
+        return sql.deleteByWhere(clazz, where, insertUpdateTimeOut);
     }
 
     @Override
@@ -105,8 +105,8 @@ public class DBTemplateClient implements DBOperations {
     }
 
     @Override
-    public int countBySql(Class<?> clazz, String where) throws Exception {
-        return sql.countBySql(clazz, where, qurryTimeOut);
+    public int countByWhere(Class<?> clazz, String where) throws Exception {
+        return sql.countByWhere(clazz, where, qurryTimeOut);
     }
 
     /**
@@ -126,26 +126,6 @@ public class DBTemplateClient implements DBOperations {
     public int countByPreSQL(String sql, Object... params) throws Exception {
         return presql.countByPreSQL(sql, qurryTimeOut, params);
     }
-
-    //    public DBTemplateClient withTranction(boolean with) {
-    //        LocalParam param = localParams.get();
-    //        if (param == null) {
-    //            param = new LocalParam();
-    //            localParams.set(param);
-    //        }
-    //        param.setWithTranc(with);
-    //        return proxy;
-    //    }
-    //
-    //    public DBTemplateClient timeOut(int time) {
-    //        LocalParam param = localParams.get();
-    //        if (param == null) {
-    //            param = new LocalParam();
-    //            localParams.set(param);
-    //        }
-    //        param.setTimeout(time);
-    //        return proxy;
-    //    }
 
     public Connection getConn() throws Exception {
         return this.connHelper.get();
@@ -172,7 +152,7 @@ public class DBTemplateClient implements DBOperations {
                 conn.setAutoCommit(false);
                 conn.setTransactionIsolation(level);
                 connHelper.lockConn(conn);
-                logger.info(String.format("Tid:%s open transaction", Thread.currentThread().getId()));
+                logger.debug(String.format("Tid:%s open transaction", Thread.currentThread().getId()));
             } catch (Exception ex) {
                 logger.error(String.format("Tid:%s error", Thread.currentThread().getId()), ex);
             }
@@ -190,7 +170,7 @@ public class DBTemplateClient implements DBOperations {
         Connection conn = connHelper.get();
         if (conn != null) {
             conn.commit();
-            logger.info(String.format("Tid:%s commit transaction", Thread.currentThread().getId()));
+            logger.debug(String.format("Tid:%s commit transaction", Thread.currentThread().getId()));
         } else {
             throw new Exception("conn is null when commitTransaction");
         }
@@ -205,7 +185,7 @@ public class DBTemplateClient implements DBOperations {
         Connection conn = connHelper.get();
         if (conn != null) {
             conn.rollback();
-            logger.info(String.format("Tid:%s rollback transaction", Thread.currentThread().getId()));
+            logger.debug(String.format("Tid:%s rollback transaction", Thread.currentThread().getId()));
         } else {
             throw new Exception("conn is null when rollbackTransaction");
         }
@@ -229,7 +209,7 @@ public class DBTemplateClient implements DBOperations {
             } finally {
                 connHelper.unLockConn();
                 connHelper.release(conn);
-                logger.info(String.format("Tid:%s end transaction", Thread.currentThread().getId()));
+                logger.debug(String.format("Tid:%s end transaction", Thread.currentThread().getId()));
             }
         } else {
             throw new Exception("conn is null when endTransaction");
@@ -242,18 +222,18 @@ public class DBTemplateClient implements DBOperations {
     }
 
     @Override
-    public void updateByPreSql(Class<?> clazz, String sql, Object... param) throws Exception {
-
+    public int updateByPreSql(Class<?> clazz, String sql, Object... param) throws Exception {
+        return 0;
     }
 
     @Override
-    public void deleteByPreSql(Class<?> clazz, String where) throws Exception {
-
+    public int deleteByPreWhere(Class<?> clazz, String where, Object... param) throws Exception {
+        return 0;
     }
 
     @Override
-    public <T> List<T> getListBySql(Class<T> clazz, String sql) throws Exception {
-        return null;
+    public <T> List<T> getListBySql(Class<T> clazz, String sqlquery) throws Exception {
+        return sql.getListBySql(clazz, sqlquery, qurryTimeOut);
     }
 
     @Override
@@ -262,37 +242,8 @@ public class DBTemplateClient implements DBOperations {
     }
 
     @Override
-    public int execBySQL(String sql) throws Exception {
+    public int execBySQL(String sqlquery) throws Exception {
         return 0;
     }
 
-    final static class Other {
-        private long timeout;
-        private boolean transaction;
-        private boolean printsql;
-
-        public long getTimeout() {
-            return timeout;
-        }
-
-        public void setTimeout(long timeout) {
-            this.timeout = timeout;
-        }
-
-        public boolean isTransaction() {
-            return transaction;
-        }
-
-        public void setTransaction(boolean transaction) {
-            this.transaction = transaction;
-        }
-
-        public boolean isPrintsql() {
-            return printsql;
-        }
-
-        public void setPrintsql(boolean printsql) {
-            this.printsql = printsql;
-        }
-    }
 }

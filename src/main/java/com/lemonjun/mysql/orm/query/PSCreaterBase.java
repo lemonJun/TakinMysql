@@ -4,8 +4,6 @@ import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import com.lemonjun.mysql.orm.util.Common;
 import com.lemonjun.mysql.orm.util.OutSQL;
@@ -43,80 +41,80 @@ public abstract class PSCreaterBase implements IStatementCreater {
         return ps;
     }
 
-    @Override
-    public PreparedStatement createDeleteByCustom(Class<?> clazz, Connection conn, Map<String, Object> condition, OutSQL sql) throws Exception {
-
-        if (condition == null || condition.size() <= 0) {
-            throw new Exception("delete必须带条件");
-        }
-
-        StringBuffer sbSql = new StringBuffer("DELETE FROM ");
-        sbSql.append(Common.getTableName(clazz));
-        sbSql.append(" WHERE ");
-        Set<String> keys = condition.keySet();
-        int index = 0;
-        for (String key : keys) {
-            if (index != 0) {
-                sbSql.append(" AND ");
-            }
-            sbSql.append(key);
-            sbSql.append("=?");
-        }
-
-        sql.setSql(sbSql.toString());
-        PreparedStatement ps = conn.prepareStatement(sql.getSql());
-        index = 1;
-        for (String key : keys) {
-            Common.setPara(ps, condition.get(key), index);
-            index++;
-        }
-
-        return ps;
-    }
-
-    @Override
-    public PreparedStatement createGetByCustom(Class<?> clazz, Connection conn, String columns, Map<String, Object> condition, String orderBy, OutSQL sql) throws Exception {
-
-        StringBuffer sbSql = new StringBuffer("SELECT ");
-        if (columns == null || columns.trim().equals("")) {
-            sbSql.append("*");
-        } else {
-            sbSql.append(columns);
-        }
-        sbSql.append(" FROM ");
-        sbSql.append(Common.getTableName(clazz));
-
-        int index = 0;
-        Set<String> keys = null;
-        if (condition != null) {
-            sbSql.append(" WHERE ");
-            keys = condition.keySet();
-            for (String key : keys) {
-                if (index != 0) {
-                    sbSql.append(" AND ");
-                }
-                sbSql.append(key);
-                sbSql.append("=?");
-            }
-        }
-
-        if (orderBy != null && !orderBy.trim().equals("")) {
-            sbSql.append(" ORDER BY ");
-            sbSql.append(orderBy);
-        }
-
-        sql.setSql(sbSql.toString());
-
-        PreparedStatement ps = conn.prepareStatement(sql.getSql());
-        if (condition != null) {
-            index = 1;
-            for (String key : keys) {
-                Common.setPara(ps, condition.get(key), index);
-                index++;
-            }
-        }
-        return ps;
-    }
+    //    @Override
+    //    public PreparedStatement createDeleteByCustom(Class<?> clazz, Connection conn, Map<String, Object> condition, OutSQL sql) throws Exception {
+    //
+    //        if (condition == null || condition.size() <= 0) {
+    //            throw new Exception("delete必须带条件");
+    //        }
+    //
+    //        StringBuffer sbSql = new StringBuffer("DELETE FROM ");
+    //        sbSql.append(Common.getTableName(clazz));
+    //        sbSql.append(" WHERE ");
+    //        Set<String> keys = condition.keySet();
+    //        int index = 0;
+    //        for (String key : keys) {
+    //            if (index != 0) {
+    //                sbSql.append(" AND ");
+    //            }
+    //            sbSql.append(key);
+    //            sbSql.append("=?");
+    //        }
+    //
+    //        sql.setSql(sbSql.toString());
+    //        PreparedStatement ps = conn.prepareStatement(sql.getSql());
+    //        index = 1;
+    //        for (String key : keys) {
+    //            Common.setPara(ps, condition.get(key), index);
+    //            index++;
+    //        }
+    //
+    //        return ps;
+    //    }
+    //
+    //    @Override
+    //    public PreparedStatement createGetByCustom(Class<?> clazz, Connection conn, String columns, Map<String, Object> condition, String orderBy, OutSQL sql) throws Exception {
+    //
+    //        StringBuffer sbSql = new StringBuffer("SELECT ");
+    //        if (columns == null || columns.trim().equals("")) {
+    //            sbSql.append("*");
+    //        } else {
+    //            sbSql.append(columns);
+    //        }
+    //        sbSql.append(" FROM ");
+    //        sbSql.append(Common.getTableName(clazz));
+    //
+    //        int index = 0;
+    //        Set<String> keys = null;
+    //        if (condition != null) {
+    //            sbSql.append(" WHERE ");
+    //            keys = condition.keySet();
+    //            for (String key : keys) {
+    //                if (index != 0) {
+    //                    sbSql.append(" AND ");
+    //                }
+    //                sbSql.append(key);
+    //                sbSql.append("=?");
+    //            }
+    //        }
+    //
+    //        if (orderBy != null && !orderBy.trim().equals("")) {
+    //            sbSql.append(" ORDER BY ");
+    //            sbSql.append(orderBy);
+    //        }
+    //
+    //        sql.setSql(sbSql.toString());
+    //
+    //        PreparedStatement ps = conn.prepareStatement(sql.getSql());
+    //        if (condition != null) {
+    //            index = 1;
+    //            for (String key : keys) {
+    //                Common.setPara(ps, condition.get(key), index);
+    //                index++;
+    //            }
+    //        }
+    //        return ps;
+    //    }
 
     //    //不需要支持其它数据库
     //    private String getNoLock(OperatorType opType) {

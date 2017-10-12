@@ -15,23 +15,23 @@ public interface DBOperations {
 
     public abstract Object insert(Object t) throws Exception;
 
-    public abstract void upate(Object t) throws Exception;
+    public abstract int upate(Object t) throws Exception;
 
-    public abstract <I> void updateByID(Class<?> clazz, String updateStatement, I id) throws Exception;
-
-    @Deprecated
-    public abstract void updateByWhere(Class<?> clazz, String updateStatement, String where) throws Exception;
-
-    public abstract void updateByPreSql(Class<?> clazz, String sql, Object... params) throws Exception;
-
-    public abstract <I> void deleteByID(Class<?> clazz, I id) throws Exception;
-
-    public abstract <I> void deleteByIDS(Class<?> clazz, I[] ids) throws Exception;
+    public abstract <I> int updateByID(Class<?> clazz, String updateStatement, I id) throws Exception;
 
     @Deprecated
-    public abstract void deleteByWhere(Class<?> clazz, String where) throws Exception;
+    public abstract int updateByWhere(Class<?> clazz, String updateStatement, String where) throws Exception;
 
-    public abstract void deleteByPreSql(Class<?> clazz, String where) throws Exception;
+    public abstract int updateByPreSql(Class<?> clazz, String sql, Object... params) throws Exception;
+
+    public abstract <I> int deleteByID(Class<?> clazz, I id) throws Exception;
+
+    public abstract <I> int deleteByIDS(Class<?> clazz, I[] ids) throws Exception;
+
+    @Deprecated
+    public abstract int deleteByWhere(Class<?> clazz, String where) throws Exception;
+
+    public abstract int deleteByPreWhere(Class<?> clazz, String where, Object... param) throws Exception;
 
     public abstract <I> Object getById(Class<?> clazz, I id) throws Exception;
 
@@ -58,7 +58,7 @@ public interface DBOperations {
     public abstract int execByPreSQL(String presql, Object... params) throws Exception;
 
     @Deprecated
-    public abstract int countBySql(Class<?> clazz, String where) throws Exception;
+    public abstract int countByWhere(Class<?> clazz, String where) throws Exception;
 
     public abstract int countByPreSQL(String sql, Object... params) throws Exception;
 

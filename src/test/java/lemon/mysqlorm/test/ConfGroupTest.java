@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.lemonjun.mysql.orm.BDProvider;
+import com.lemonjun.mysql.orm.DBProvider;
 
 public class ConfGroupTest {
 
@@ -12,7 +12,7 @@ public class ConfGroupTest {
     public void findAll() {
         try {
             String sql = "select * from XXL_CONF_GROUP ";
-            List<ConfGroup> list = BDProvider.getInst().Client().getListByPreSQL(ConfGroup.class, sql);
+            List<ConfGroup> list = DBProvider.getInst().Client().getListByPreSQL(ConfGroup.class, sql);
             for (ConfGroup group : list) {
                 System.out.println("group:" + group.getGroupname() + " titel:" + group.getGrouptitle());
             }

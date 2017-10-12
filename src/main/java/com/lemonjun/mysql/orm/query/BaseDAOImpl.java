@@ -88,6 +88,33 @@ public class BaseDAOImpl extends AbstractDAO {
         Connection conn = null;
         PreparedStatement ps = null;
         try {
+            conn = connHelper.get();
+            ps = conn.prepareStatement(sql);
+            ps.setQueryTimeout(timeOut);
+
+            if (param != null) {
+                for (int i = 0; i < param.length; i++) {
+                    Common.setPara(ps, param[i], i + 1);
+                }
+            }
+            long startTime = System.currentTimeMillis();
+            int result = ps.executeUpdate();
+            printlnSqlAndTime(sql, startTime);
+            return result;
+        } catch (SQLException e) {
+            logger.error("execByPreSQL error sql:" + sql, e);
+            throw e;
+        } finally {
+            JdbcUitl.closeStatement(ps);
+            connHelper.release(conn);
+        }
+    }
+
+    @Override
+    public int updateByPreSql(String sql, int timeOut, Object... param) throws Exception {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
             //conn = connHelper.getReadConnection();
             //modify by haoxb 2012-09-27
             conn = connHelper.get();
@@ -112,6 +139,7 @@ public class BaseDAOImpl extends AbstractDAO {
         }
     }
 
+    @Override
     public <T, I> List<T> getListByIDS(Class<T> clazz, I[] ids, int timeOut) throws Exception {
         Connection conn = null;
         ResultSet rs = null;
@@ -137,6 +165,7 @@ public class BaseDAOImpl extends AbstractDAO {
         return dataList;
     }
 
+    @Override
     public Object insert(Object bean, int timeOut) throws Exception {
         Class<?> beanCls = bean.getClass();
 
@@ -206,7 +235,8 @@ public class BaseDAOImpl extends AbstractDAO {
         return rst;
     }
 
-    public void upateEntity(Object bean, int timeOut) throws Exception {
+    @Override
+    public int upateEntity(Object bean, int timeOut) throws Exception {
         Connection conn = null;
         PreparedStatement ps = null;
         OutSQL sql = new OutSQL();
@@ -215,8 +245,9 @@ public class BaseDAOImpl extends AbstractDAO {
             ps = psCreater.createUpdateEntity(bean, conn, sql);
             ps.setQueryTimeout(timeOut);
             long startTime = System.currentTimeMillis();
-            ps.executeUpdate();
+            int rows = ps.executeUpdate();
             printlnSqlAndTime(sql.getRealSql(), startTime);
+            return rows;
         } catch (Exception e) {
             logger.error("upateEntity error sql:" + sql.getSql(), e);
             throw e;
@@ -226,7 +257,8 @@ public class BaseDAOImpl extends AbstractDAO {
         }
     }
 
-    public <I> void updateByID(Class<?> clazz, String updateStatement, I id, int timeOut) throws Exception {
+    @Override
+    public <I> int updateByID(Class<?> clazz, String updateStatement, I id, int timeOut) throws Exception {
         Connection conn = null;
         PreparedStatement ps = null;
         OutSQL sql = new OutSQL();
@@ -235,8 +267,9 @@ public class BaseDAOImpl extends AbstractDAO {
             ps = psCreater.createUpdateByID(clazz, conn, updateStatement, id, sql);
             ps.setQueryTimeout(timeOut);
             long startTime = System.currentTimeMillis();
-            ps.executeUpdate();
+            int rows = ps.executeUpdate();
             printlnSqlAndTime(sql.getRealSql(), startTime);
+            return rows;
         } catch (Exception e) {
             logger.error("upateByID error sql:" + sql.getSql(), e);
             throw e;
@@ -246,7 +279,8 @@ public class BaseDAOImpl extends AbstractDAO {
         }
     }
 
-    public <I> void deleteByID(Class<?> clazz, I id, int timeOut) throws Exception {
+    @Override
+    public <I> int deleteByID(Class<?> clazz, I id, int timeOut) throws Exception {
         Connection conn = null;
         PreparedStatement ps = null;
         OutSQL sql = new OutSQL();
@@ -255,8 +289,10 @@ public class BaseDAOImpl extends AbstractDAO {
             ps = psCreater.createDelete(clazz, conn, id, sql);
             ps.setQueryTimeout(timeOut);
             long startTime = System.currentTimeMillis();
-            ps.execute();
+            //            ps.execute();
+            int rows = ps.executeUpdate();
             printlnSqlAndTime(sql.getRealSql(), startTime);
+            return rows;
         } catch (Exception e) {
             logger.error("deleteByID error sql:" + sql.getSql(), e);
             throw e;
@@ -266,7 +302,8 @@ public class BaseDAOImpl extends AbstractDAO {
         }
     }
 
-    public <I> void deleteByIDS(Class<?> clazz, I[] ids, int timeOut) throws Exception {
+    @Override
+    public <I> int deleteByIDS(Class<?> clazz, I[] ids, int timeOut) throws Exception {
         Connection conn = null;
         PreparedStatement ps = null;
         OutSQL sql = new OutSQL();
@@ -275,8 +312,10 @@ public class BaseDAOImpl extends AbstractDAO {
             ps = psCreater.createDeleteByIDS(clazz, conn, ids, sql);
             ps.setQueryTimeout(timeOut);
             long startTime = System.currentTimeMillis();
-            ps.execute();
+            //            ps.execute();
+            int rows = ps.executeUpdate();
             printlnSqlAndTime(sql.getRealSql(), startTime);
+            return rows;
         } catch (Exception e) {
             logger.error("deleteByIDS error sql:" + sql.getSql(), e);
             throw e;
@@ -286,6 +325,7 @@ public class BaseDAOImpl extends AbstractDAO {
         }
     }
 
+    @Override
     public <I> Object getById(Class<?> clazz, I id, int timeOut) throws Exception {
         Connection conn = null;
         ResultSet rs = null;
@@ -319,7 +359,8 @@ public class BaseDAOImpl extends AbstractDAO {
         }
     }
 
-    public int countBySql(Class<?> clazz, String condition, int timeOut) throws Exception {
+    @Override
+    public int countByWhere(Class<?> clazz, String condition, int timeOut) throws Exception {
         condition = SqlInjectHelper.simpleFilterSql(condition);
 
         int count = 0;
@@ -328,8 +369,6 @@ public class BaseDAOImpl extends AbstractDAO {
         PreparedStatement ps = null;
         OutSQL sql = new OutSQL();
         try {
-            // 2011-05-24 使用只读连接
-            //			conn = connHelper.get();
             conn = connHelper.getReadConnection();
 
             ps = psCreater.createGetCount(clazz, conn, condition, sql);
@@ -386,7 +425,7 @@ public class BaseDAOImpl extends AbstractDAO {
     }
 
     @Override
-    public void updateByWhere(Class<?> clazz, String updateStatement, String where, int timeOut) throws Exception {
+    public int updateByWhere(Class<?> clazz, String updateStatement, String where, int timeOut) throws Exception {
         where = SqlInjectHelper.simpleFilterSql(where);
         updateStatement = SqlInjectHelper.simpleFilterSql(updateStatement);
 
@@ -398,8 +437,9 @@ public class BaseDAOImpl extends AbstractDAO {
             ps = psCreater.createUpdateByCustom(clazz, conn, updateStatement, where, out);
             ps.setQueryTimeout(timeOut);
             long startTime = System.currentTimeMillis();
-            ps.executeUpdate();
+            int rows = ps.executeUpdate();
             printlnSqlAndTime(out.getRealSql(), startTime);
+            return rows;
         } catch (Exception e) {
             logger.error("updateBySql error sql:" + out.getSql(), e);
             throw e;
@@ -410,7 +450,7 @@ public class BaseDAOImpl extends AbstractDAO {
     }
 
     @Override
-    public void deleteByWhere(Class<?> clazz, String where, int timeOut) throws Exception {
+    public int deleteByWhere(Class<?> clazz, String where, int timeOut) throws Exception {
         where = SqlInjectHelper.simpleFilterSql(where);
         Connection conn = null;
         PreparedStatement ps = null;
@@ -420,8 +460,10 @@ public class BaseDAOImpl extends AbstractDAO {
             ps = psCreater.createDeleteByCustom(clazz, conn, where, sql);
             ps.setQueryTimeout(timeOut);
             long startTime = System.currentTimeMillis();
-            ps.execute();
+            //            ps.execute();
+            int rows = ps.executeUpdate();
             printlnSqlAndTime(sql.getRealSql(), startTime);
+            return rows;
         } catch (Exception e) {
             logger.error("deleteBySql error sql:" + sql.getSql(), e);
             throw e;
@@ -446,7 +488,36 @@ public class BaseDAOImpl extends AbstractDAO {
         try {
             conn = connHelper.getReadConnection();
 
-            ps = psCreater.createGetByCustom(clazz, conn, columns, condition, orderBy, sql);
+            ps = psCreater.createGetByCustom(clazz, conn, columns, condition, orderBy, limit, sql);
+            ps.setQueryTimeout(timeOut);
+            long startTime = System.currentTimeMillis();
+            rs = ps.executeQuery();
+            printlnSqlAndTime(sql.getRealSql(), startTime);
+            dataList = populateData(rs, clazz);
+        } catch (SQLException e) {
+            logger.error("getListBySql error sql:" + sql.getSql(), e);
+            throw e;
+        } finally {
+            JdbcUitl.closeResultSet(rs);
+            JdbcUitl.closeStatement(ps);
+            connHelper.release(conn);
+        }
+        return dataList;
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    public <T> List<T> getListBySql(Class<T> clazz, String sqlquery, int timeOut) throws Exception {
+
+        Connection conn = null;
+        ResultSet rs = null;
+        PreparedStatement ps = null;
+        List dataList = null;
+        OutSQL sql = new OutSQL();
+        try {
+            conn = connHelper.getReadConnection();
+            ps = conn.prepareStatement(sqlquery);
+
             ps.setQueryTimeout(timeOut);
             long startTime = System.currentTimeMillis();
             rs = ps.executeQuery();

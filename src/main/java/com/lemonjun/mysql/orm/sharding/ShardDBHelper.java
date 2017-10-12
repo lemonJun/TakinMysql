@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-import com.lemonjun.mysql.orm.BDProvider;
+import com.lemonjun.mysql.orm.DBProvider;
 import com.lemonjun.mysql.orm.annotation.NotNull;
 import com.lemonjun.mysql.orm.util.CollectionUtils;
 import com.lemonjun.mysql.orm.util.JdbcUitl;
@@ -43,7 +43,7 @@ public class ShardDBHelper {
             Preconditions.checkNotNull(bean, "insert bean cannot be null");
             Preconditions.checkState(StringUtils.isNotEmpty(table), "insert table cannot be null");
 
-            conn = BDProvider.getInst().Client().getConn();
+            conn = DBProvider.getInst().Client().getConn();
             ps = ShardPSCreater.createInsertPs(bean, table, conn, sql);
             ps.setQueryTimeout(1);
             ps.executeUpdate();
@@ -52,7 +52,7 @@ public class ShardDBHelper {
             throw e;
         } finally {
             JdbcUitl.closeStatement(ps);
-            BDProvider.getInst().Client().release(conn);
+            DBProvider.getInst().Client().release(conn);
         }
     }
 
@@ -70,7 +70,7 @@ public class ShardDBHelper {
             Preconditions.checkState(CollectionUtils.isNotEmpty(beans), "insert bean cannot be null");
             Preconditions.checkState(StringUtils.isNotEmpty(table), "insert table cannot be null");
 
-            conn = BDProvider.getInst().Client().getConn();
+            conn = DBProvider.getInst().Client().getConn();
             ps = ShardPSCreater.createInsertPs(beans.get(0), table, conn, sql);
             ps.setQueryTimeout(1);
             ps.executeUpdate();
@@ -79,7 +79,7 @@ public class ShardDBHelper {
             throw e;
         } finally {
             JdbcUitl.closeStatement(ps);
-            BDProvider.getInst().Client().release(conn);
+            DBProvider.getInst().Client().release(conn);
         }
     }
 
@@ -96,7 +96,7 @@ public class ShardDBHelper {
         try {
             Preconditions.checkNotNull(bean, "insert bean cannot be null");
             Preconditions.checkState(StringUtils.isNotEmpty(table), "insert table cannot be null");
-            conn = BDProvider.getInst().Client().getConn();
+            conn = DBProvider.getInst().Client().getConn();
             ps = ShardPSCreater.createInsertPs(bean, table, conn, sql);
             ps.setQueryTimeout(1);
             ps.executeUpdate();
@@ -105,7 +105,7 @@ public class ShardDBHelper {
             throw e;
         } finally {
             JdbcUitl.closeStatement(ps);
-            BDProvider.getInst().Client().release(conn);
+            DBProvider.getInst().Client().release(conn);
         }
     }
 

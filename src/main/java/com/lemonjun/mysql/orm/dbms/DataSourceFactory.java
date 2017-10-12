@@ -61,7 +61,7 @@ public class DataSourceFactory {
         Map<String, ClusterConfig> clusters = config.getDataSourceConfig();
         for (String key : clusters.keySet()) {
             String clazzName = clusters.get(key).getDataSource();
-            logger.info("key:" + key + " datasource class:" + clazzName);
+            logger.debug("key:" + key + " datasource class:" + clazzName);
             Object obj = Class.forName(clazzName).getConstructor(ClusterConfig.class).newInstance(clusters.get(key));
             if (obj instanceof AbstractDataSource) {
                 clouds.put(key, (AbstractDataSource) obj);

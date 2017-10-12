@@ -75,8 +75,8 @@ public class SqlInjectHelper {
         sbFullKey.replace(0, 1, "");
         sbSimpleKey.replace(0, 1, "");
 
-        logger.info(sbFullKey.toString());
-        logger.info(sbSimpleKey.toString());
+        logger.debug(sbFullKey.toString());
+        logger.debug(sbSimpleKey.toString());
 
         fullPatternSql = Pattern.compile(sbFullKey.toString(), Pattern.CASE_INSENSITIVE);
         simplePatternSql = Pattern.compile(sbSimpleKey.toString(), Pattern.CASE_INSENSITIVE);

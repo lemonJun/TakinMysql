@@ -20,4 +20,6 @@ public interface IPreStatementDAO {
     //通过preparedstatement 计数
     public abstract int countByPreSQL(String sql, int timeOut, Object... params) throws Exception;
 
+    public int updateByPreSql(String sql, int timeOut, Object... param) throws Exception;
+
 }

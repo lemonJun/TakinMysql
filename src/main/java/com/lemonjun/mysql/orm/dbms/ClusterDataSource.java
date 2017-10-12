@@ -73,7 +73,7 @@ public class ClusterDataSource extends AbstractDataSource {
 
         masterDbDataSource = curDbDataSource; // 2011-05-24 主库
         masterConfig = mconfig;
-        logger.info(String.format("init cluster datasource\n master:%s\n slave:%s", mconfig != null ? mconfig.getConnetionURL() : "null", sconfig != null ? sconfig.getConnetionURL() : "null"));
+        logger.debug(String.format("init cluster datasource\n master:%s\n slave:%s", mconfig != null ? mconfig.getConnetionURL() : "null", sconfig != null ? sconfig.getConnetionURL() : "null"));
         if (masterDbDataSource == null) {
             throw new Exception("SWAP no DbConfig in " + dataSourceConfig.getName());
         }
@@ -154,7 +154,7 @@ public class ClusterDataSource extends AbstractDataSource {
             }
         }
         if (dataSourceread == null) {
-            logger.info("warning!warning! need swap to readonly datasource,but not");
+            logger.debug("warning!warning! need swap to readonly datasource,but not");
             dataSourceread = masterDbDataSource;
         }
         if (dataSourceread != null) {
@@ -187,7 +187,7 @@ public class ClusterDataSource extends AbstractDataSource {
             }
         }
 
-        logger.info("SWAP no available datasource. but current datasource is " + curDbDataSource);
+        logger.debug("SWAP no available datasource. but current datasource is " + curDbDataSource);
         return curDbDataSource;
     }
 
@@ -211,7 +211,7 @@ public class ClusterDataSource extends AbstractDataSource {
                             clusterDb.currentReadDataSource = clusterDb.slaveDbDataSource;
                             clusterDb.curDbDataSource = clusterDb.currentReadDataSource;
                             curDbSwitchedTime = System.currentTimeMillis();
-                            logger.info("HaPlus:读切库  checkAndChangeThread switched to slave curDbDataSource dbs , current is :" + clusterDb.curDbDataSource.toString());
+                            logger.debug("HaPlus:读切库  checkAndChangeThread switched to slave curDbDataSource dbs , current is :" + clusterDb.curDbDataSource.toString());
                             MessageAlert.Factory.get().sendMessage("HaPlus: 读切库" + clusterDb.slaveDbDataSource.getConfig().getConnetionURL());
                         }
 
@@ -219,7 +219,7 @@ public class ClusterDataSource extends AbstractDataSource {
                         if ((clusterDb.currentReadDataSource != null) && (System.currentTimeMillis() - curDbSwitchedTime > READ_SLAVE_DB_TIME) && (DbUtils.checkHostLive(DbUtils.getIpFromUrl(clusterDb.masterDbDataSource.getName()))) && (clusterDb.masterDbDataSource.checkDbLiveForTimes())) {
                             clusterDb.currentReadDataSource = null;
                             clusterDb.curDbDataSource = clusterDb.masterDbDataSource;
-                            logger.info("HaPlus: 读恢复 , checkAndChangeThread switched to master  curDbDataSource dbs , current is :" + clusterDb.curDbDataSource.toString());
+                            logger.debug("HaPlus: 读恢复 , checkAndChangeThread switched to master  curDbDataSource dbs , current is :" + clusterDb.curDbDataSource.toString());
                             MessageAlert.Factory.get().sendMessage("HaPlus: 读恢复" + clusterDb.masterDbDataSource.getConfig().getConnetionURL());
                         }
                         logger.debug("HaPlus: checkAndChangeThread iterator dbs , current is :" + clusterDb.curDbDataSource.toString());

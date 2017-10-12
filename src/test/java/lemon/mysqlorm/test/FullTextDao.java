@@ -10,14 +10,14 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
-import com.lemonjun.mysql.orm.BDProvider;
+import com.lemonjun.mysql.orm.DBProvider;
 
 public class FullTextDao {
 
     @Test
     public void readdao() {
         try {
-            List<FullTextSchema> list = BDProvider.getInst().Client().getAllByLimit(FullTextSchema.class, "");
+            List<FullTextSchema> list = DBProvider.getInst().Client().getAllByLimit(FullTextSchema.class, "");
             System.out.println(JSON.toJSONString(list));
         } catch (Exception e) {
             e.printStackTrace();

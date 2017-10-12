@@ -98,7 +98,7 @@ public class DbDataSource extends AbstractDataSource {
 
             if (isInit.compareAndSet(false, true)) {
                 MAX_CREATING_THREADS = MessageAlert.Factory.getMaxThreadsPerDs();
-                logger.info("HaPlus : MAX_CREATING_THREADS is : " + MAX_CREATING_THREADS);
+                logger.debug("HaPlus : MAX_CREATING_THREADS is : " + MAX_CREATING_THREADS);
             }
 
             for (int index = 0; index < min; index++) {
@@ -121,11 +121,11 @@ public class DbDataSource extends AbstractDataSource {
      * shutdown the datasource
      */
     public synchronized void shutdown() {
-        logger.info("-->connectinpoll shutdown " + this.isShutDown + "\n\n");
+        logger.debug("-->connectinpoll shutdown " + this.isShutDown + "\n\n");
         if (this.isShutDown)
             return;
 
-        logger.info("Shutting down connection pool...");
+        logger.debug("Shutting down connection pool...");
         this.isShutDown = true;
 
         for (int index = 0; index < this.getMonitors().size(); index++) {
@@ -134,7 +134,7 @@ public class DbDataSource extends AbstractDataSource {
         }
 
         terminateAllConnections();
-        logger.info("Connection pool has been shutdown.");
+        logger.debug("Connection pool has been shutdown.");
 
     }
 
@@ -163,7 +163,7 @@ public class DbDataSource extends AbstractDataSource {
      * @throws SQLException
      */
     private void assertLive() throws SQLException {
-        logger.info(String.format("isalive:%s isshutdown:%s", isAlive, isShutDown));
+        logger.debug(String.format("isalive:%s isshutdown:%s", isAlive, isShutDown));
         if ((!isAlive) || isShutDown) {
             throw new SQLException("SWAP " + this.getName() + " db connection pool is no alive or shutdown!");
         }
@@ -213,7 +213,7 @@ public class DbDataSource extends AbstractDataSource {
         if (connection.isBroken() || isShutDown) {
             // hook calls
             if (connection.isBroken()) {
-                logger.info("SWAP connection.isBroken, pool is" + this);
+                logger.debug("SWAP connection.isBroken, pool is" + this);
                 for (int index = 0; index < this.getMonitors().size(); index++) {
                     DbMonitor monitor = this.getMonitors().get(index);
                     monitor.onBroken(this, connection);
@@ -318,7 +318,7 @@ public class DbDataSource extends AbstractDataSource {
 
         if (result) {
             this.isAlive = true;
-            logger.info("SWAP END of check live with wrapped." + ", RESULT: " + isAlive + "; NAME: " + name + "; Thread Id: " + Thread.currentThread().getId());
+            logger.debug("SWAP END of check live with wrapped." + ", RESULT: " + isAlive + "; NAME: " + name + "; Thread Id: " + Thread.currentThread().getId());
             return result;
         }
 
@@ -336,7 +336,7 @@ public class DbDataSource extends AbstractDataSource {
         if (result)
             logger.debug("SWAP END of check live with raw." + ", RESULT: " + isAlive + "; NAME: " + name + "; Thread Id: " + Thread.currentThread().getId());
         else
-            logger.info("SWAP END of check live with raw." + ", RESULT: " + isAlive + "; NAME: " + name + "; Thread Id: " + Thread.currentThread().getId());
+            logger.debug("SWAP END of check live with raw." + ", RESULT: " + isAlive + "; NAME: " + name + "; Thread Id: " + Thread.currentThread().getId());
 
         return result;
     }
@@ -472,7 +472,7 @@ public class DbDataSource extends AbstractDataSource {
             String username = this.config.getUsername();
             String password = this.config.getPassword();
 
-            logger.info(String.format("url:%s user:%s pwd:%s", url, username, password));
+            logger.debug(String.format("url:%s user:%s pwd:%s", url, username, password));
             connection = DriverManager.getConnection(url, username, password);
             lgconnection = new ConnectionWrapper(this, connection);
             updateSize(1);

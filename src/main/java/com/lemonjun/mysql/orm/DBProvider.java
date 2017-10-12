@@ -9,33 +9,33 @@ import org.apache.log4j.Logger;
  * @date 2016年6月8日 上午10:59:19
  * @see
  */
-public class BDProvider {
+public class DBProvider {
 
-    private static final Logger logger = Logger.getLogger(BDProvider.class);
+    private static final Logger logger = Logger.getLogger(DBProvider.class);
 
     private volatile DBTemplateClient client = null;
-    private volatile static BDProvider instance = null;
+    private volatile static DBProvider instance = null;
 
-    private BDProvider() {
+    private DBProvider() {
     }
 
     public DBTemplateClient Client() {
         return client;
     }
 
-    public  static BDProvider getInst() {
+    public  static DBProvider getInst() {
         if (instance == null) {
-            synchronized (BDProvider.class) {
+            synchronized (DBProvider.class) {
                 if (instance != null) {
                     return instance;
                 }
                 try {
-                    String dbpath = BDProvider.class.getClassLoader().getResource("db.properties").getPath();
+                    String dbpath = DBProvider.class.getClassLoader().getResource("db.properties").getPath();
                     //                    String dbpath = "E:/myworkspace/git/lemon.mysql.orm/src/test/resources/db.properties";
                     logger.info(dbpath);
-                    instance = new BDProvider();
+                    instance = new DBProvider();
                     instance.client = new DBTemplateClient(dbpath);
-                    logger.info("init db success");
+                    logger.debug("init db success");
                 } catch (Exception e) {
                     instance = null;
                     logger.error("init db error", e);

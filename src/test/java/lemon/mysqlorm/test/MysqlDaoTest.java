@@ -8,7 +8,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.lemonjun.mysql.orm.BDProvider;
+import com.lemonjun.mysql.orm.DBProvider;
 
 public class MysqlDaoTest {
 
@@ -19,7 +19,7 @@ public class MysqlDaoTest {
     //            String sql = "select * from kv_entity where qd_name='" + keyCategory + "' and kv_group_id=" + groupId + " limit 1 ";
     //            //            List<CategoryBean> cates = BDProvider.getInst().Client().withTranction(true).timeOut(20 - 0).getListByPreSQL(CategoryBean.class, sql, 5);
     //
-    //            logger.info(String.format("result size:%s key:%s name:%s sql:%s", cates.size(), cates.get(0).getYc_id(), cates.get(0).getYc_name(), sql));
+    //            logger.debug(String.format("result size:%s key:%s name:%s sql:%s", cates.size(), cates.get(0).getYc_id(), cates.get(0).getYc_name(), sql));
     //            return cates.get(0);
     //        } catch (Exception e) {
     //            e.printStackTrace();
@@ -54,9 +54,9 @@ public class MysqlDaoTest {
         public void run() {
             try {
                 String sql = "select * from kv_entity where qd_name='" + keyCategory + "' and kv_group_id=" + groupId + " limit 1 ";
-                List<CategoryBean> cates = BDProvider.getInst().Client().getListByPreSQL(CategoryBean.class, sql, 5);
+                List<CategoryBean> cates = DBProvider.getInst().Client().getListByPreSQL(CategoryBean.class, sql, 5);
 
-                logger.info(String.format("result size:%s key:%s name:%s sql:%s", cates.size(), cates.get(0).getYc_id(), cates.get(0).getYc_name(), sql));
+                logger.debug(String.format("result size:%s key:%s name:%s sql:%s", cates.size(), cates.get(0).getYc_id(), cates.get(0).getYc_name(), sql));
             } catch (Exception e) {
                 e.printStackTrace();
             }

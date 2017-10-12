@@ -68,9 +68,9 @@ public class DbUtils {
         try {
             connection.close();
         } catch (SQLException ex) {
-            logger.info("Could not close JDBC Connection", ex);
+            logger.debug("Could not close JDBC Connection", ex);
         } catch (Throwable ex) {
-            logger.info("Unexpected exception on closing JDBC Connection", ex);
+            logger.debug("Unexpected exception on closing JDBC Connection", ex);
         }
     }
 
@@ -85,9 +85,9 @@ public class DbUtils {
         try {
             stmt.close();
         } catch (SQLException ex) {
-            logger.info("Could not close JDBC Statement", ex);
+            logger.debug("Could not close JDBC Statement", ex);
         } catch (Throwable ex) {
-            logger.info("Unexpected exception on closing JDBC Statement", ex);
+            logger.debug("Unexpected exception on closing JDBC Statement", ex);
         }
     }
 
@@ -102,9 +102,9 @@ public class DbUtils {
         try {
             rs.close();
         } catch (SQLException ex) {
-            logger.info("Could not close JDBC ResultSet", ex);
+            logger.debug("Could not close JDBC ResultSet", ex);
         } catch (Throwable ex) {
-            logger.info("Unexpected exception on closing JDBC ResultSet", ex);
+            logger.debug("Unexpected exception on closing JDBC ResultSet", ex);
         }
     }
     

@@ -166,7 +166,7 @@ public class ConnectionPool {
     private void RegisterExcetEven() {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
-                logger.info("application exiting,begin remove all connections.");
+                logger.debug("application exiting,begin remove all connections.");
                 for (Connection conn : Pool) {
                     try {
                         if (conn != null && !conn.isClosed()) {

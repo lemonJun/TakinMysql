@@ -118,7 +118,7 @@ public abstract class AbstractDAO implements IStatementDAO, IPreStatementDAO {
     //此处应该用stopwatch
     public void printlnSqlAndTime(String sql, long stime) {
         if (printlnSqlAndTime) {
-            logger.info("Execute Sql: " + sql + " Time: " + (System.currentTimeMillis() - stime) + " ms");
+            logger.info("Sql: " + sql + " Time: " + (System.currentTimeMillis() - stime) + " ms");
         }
     }
 

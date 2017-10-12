@@ -36,7 +36,7 @@ public class ConnectionHelper {
         String realPath = "";
         if (swapDataSource != null) {
             realPath = (new File(configPath)).getParent() + File.separator + swapDataSource;
-            logger.info("realPath:" + realPath);
+            logger.debug("realPath:" + realPath);
             DataSourceConfig dataSourceConfig = ConfigUtil.getDataSourceConfig(realPath);
             DataSourceFactory.setConfig(dataSourceConfig);
             DataSource datasource = DataSourceFactory.getDataSource("_DEFAULT");
@@ -46,7 +46,7 @@ public class ConnectionHelper {
         if (connPool == null) {
             throw new Exception("conn pool is null: " + realPath);
         }
-        logger.info("init ConnectionHelper...");
+        logger.debug("init ConnectionHelper...");
 
     }
 

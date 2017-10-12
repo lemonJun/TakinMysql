@@ -258,7 +258,7 @@ public class Common {
         Class<?> clazz = bean.getClass();
         Method m = getGetterMethod(clazz, f);
         if (m == null) {
-            logger.info("method is null fn:" + f.getName() + "---" + bean.toString());
+            logger.debug("method is null fn:" + f.getName() + "---" + bean.toString());
             return null;
         }
         Object value = m.invoke(bean, new Object[] {});

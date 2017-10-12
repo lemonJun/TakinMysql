@@ -211,7 +211,7 @@ public class MysqlPSCreater extends PSCreaterBase {
     }
 
     @Override
-    public PreparedStatement createGetByCustom(Class<?> clazz, Connection conn, String columns, String condition, String orderBy, OutSQL sql) throws Exception {
+    public PreparedStatement createGetByCustom(Class<?> clazz, Connection conn, String columns, String condition, String orderBy, String limit, OutSQL sql) throws Exception {
         StringBuffer sbSql = new StringBuffer("SELECT ");
         if (columns == null || columns.trim().equals("")) {
             sbSql.append("*");
@@ -228,6 +228,9 @@ public class MysqlPSCreater extends PSCreaterBase {
         if (orderBy != null && !orderBy.trim().equals("")) {
             sbSql.append(" ORDER BY ");
             sbSql.append(orderBy);
+        }
+        if (StringUtils.isNotEmpty(limit)) {
+            sbSql.append(" LIMIT ").append(limit);
         }
 
         sql.setSql(sbSql.toString());
@@ -413,4 +416,5 @@ public class MysqlPSCreater extends PSCreaterBase {
         Common.setPara(ps, id, 1);
         return ps;
     }
+
 }
