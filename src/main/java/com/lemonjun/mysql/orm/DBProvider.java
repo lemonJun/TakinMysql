@@ -23,7 +23,7 @@ public class DBProvider {
         return client;
     }
 
-    public  static DBProvider getInst() {
+    public static DBProvider getInst() {
         if (instance == null) {
             synchronized (DBProvider.class) {
                 if (instance != null) {
@@ -33,8 +33,9 @@ public class DBProvider {
                     String dbpath = DBProvider.class.getClassLoader().getResource("db.properties").getPath();
                     //                    String dbpath = "E:/myworkspace/git/lemon.mysql.orm/src/test/resources/db.properties";
                     logger.info(dbpath);
-                    instance = new DBProvider();
-                    instance.client = new DBTemplateClient(dbpath);
+                    DBProvider provider = new DBProvider();
+                    provider.client = new DBTemplateClient(dbpath);
+                    instance = provider;
                     logger.debug("init db success");
                 } catch (Exception e) {
                     instance = null;
