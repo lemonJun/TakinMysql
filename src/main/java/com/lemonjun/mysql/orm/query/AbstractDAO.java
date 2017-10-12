@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.lemonjun.mysql.orm.query.IStatementCreater;
 import com.lemonjun.mysql.orm.util.Common;
 
 /**
@@ -20,7 +19,7 @@ import com.lemonjun.mysql.orm.util.Common;
  */
 public abstract class AbstractDAO implements IStatementDAO, IPreStatementDAO {
 
-    protected IStatementCreater psCreater;
+    protected MysqlPSCreater psCreater;
 
     protected ConnectionHelper connHelper;
 

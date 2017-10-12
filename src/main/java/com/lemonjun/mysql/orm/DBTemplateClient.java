@@ -10,7 +10,6 @@ import com.lemonjun.mysql.orm.query.AbstractDAO;
 import com.lemonjun.mysql.orm.query.BaseDAOImpl;
 import com.lemonjun.mysql.orm.query.ConnectionHelper;
 import com.lemonjun.mysql.orm.query.IPreStatementDAO;
-import com.lemonjun.mysql.orm.query.IStatementCreater;
 import com.lemonjun.mysql.orm.query.IStatementDAO;
 import com.lemonjun.mysql.orm.query.MysqlPSCreater;
 
@@ -39,7 +38,7 @@ public class DBTemplateClient implements DBOperations {
     public DBTemplateClient(String configPath) throws Exception {
         ConnectionHelper ch = new ConnectionHelper(configPath);
         AbstractDAO sqlDAO = null;
-        IStatementCreater creater = new MysqlPSCreater();
+        MysqlPSCreater creater = new MysqlPSCreater();
         sqlDAO = new BaseDAOImpl(creater);
         sqlDAO.setConnHelper(ch);
         this.connHelper = ch;

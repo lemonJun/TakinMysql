@@ -11,9 +11,38 @@ import com.lemonjun.mysql.orm.util.Common;
 import com.lemonjun.mysql.orm.util.OutSQL;
 import com.lemonjun.mysql.orm.util.StringUtils;
 
-public class MysqlPSCreater extends PSCreaterBase {
+public class MysqlPSCreater {
 
-    @Override
+    public <I> PreparedStatement createGetByIDS(Class<?> clazz, Connection conn, I[] ids, OutSQL sql) throws Exception {
+        StringBuffer sbSql = new StringBuffer("SELECT * FROM ");
+        sbSql.append(Common.getTableName(clazz));
+        sbSql.append(" WHERE ");
+
+        List<Field> fieldList = Common.getIdFields(clazz);
+        if (fieldList.size() != 1) {
+            throw new Exception("无法根据主键ID获取数据：主键不存在 或 有两个以上的主键");
+        } else {
+            sbSql.append(Common.getDBCloumnName(clazz, fieldList.get(0)));
+        }
+        sbSql.append(" IN (");
+        for (int i = 0; i < ids.length; i++) {
+            if (i > 0) {
+                sbSql.append(",");
+            }
+            sbSql.append("?");
+        }
+        sbSql.append(")");
+
+        sql.setSql(sbSql.toString());
+        PreparedStatement ps = conn.prepareStatement(sql.getSql());
+        int index = 1;
+        for (int i = 0; i < ids.length; i++, index++) {
+            Common.setPara(ps, ids[i], index);
+        }
+
+        return ps;
+    }
+
     public PreparedStatement createDeleteByCustom(Class<?> clazz, Connection conn, String condition, OutSQL sql) throws Exception {
 
         StringBuffer sbSql = new StringBuffer("DELETE FROM ");
@@ -30,7 +59,6 @@ public class MysqlPSCreater extends PSCreaterBase {
         return ps;
     }
 
-    @Override
     public PreparedStatement createUpdateByCustom(Class<?> clazz, Connection conn, String updateStatement, String condition, OutSQL sql) throws Exception {
 
         StringBuffer sbSql = new StringBuffer("UPDATE ");
@@ -49,7 +77,6 @@ public class MysqlPSCreater extends PSCreaterBase {
         return ps;
     }
 
-    @Override
     public PreparedStatement createUpdateEntity(Object bean, Connection conn, OutSQL sql) throws Exception {
 
         Class<?> clazz = bean.getClass();
@@ -139,7 +166,6 @@ public class MysqlPSCreater extends PSCreaterBase {
         }
     }
 
-    @Override
     public PreparedStatement createInsert(Object bean, Connection conn, OutSQL sql) throws Exception {
 
         Class<?> clazz = bean.getClass();
@@ -210,7 +236,6 @@ public class MysqlPSCreater extends PSCreaterBase {
         return ps;
     }
 
-    @Override
     public PreparedStatement createGetByCustom(Class<?> clazz, Connection conn, String columns, String condition, String orderBy, String limit, OutSQL sql) throws Exception {
         StringBuffer sbSql = new StringBuffer("SELECT ");
         if (columns == null || columns.trim().equals("")) {
@@ -239,7 +264,6 @@ public class MysqlPSCreater extends PSCreaterBase {
         return ps;
     }
 
-    @Override
     public <I> PreparedStatement createGetEntity(Class<?> clazz, Connection conn, I id, OutSQL sql) throws Exception {
         String idColumnName = "";
         List<Field> fieldList = Common.getIdFields(clazz);
@@ -269,7 +293,6 @@ public class MysqlPSCreater extends PSCreaterBase {
         return ps;
     }
 
-    @Override
     public PreparedStatement createGetByPage(Class<?> clazz, Connection conn, String condition, String columns, int page, int pageSize, String orderBy, OutSQL sql) throws Exception {
 
         int offset = pageSize * (page - 1);
@@ -300,7 +323,6 @@ public class MysqlPSCreater extends PSCreaterBase {
         return ps;
     }
 
-    @Override
     public <I> PreparedStatement createDelete(Class<?> clazz, Connection conn, I id, OutSQL sql) throws Exception {
         String idColumnName = "";
         List<Field> fieldList = Common.getIdFields(clazz);
@@ -330,7 +352,6 @@ public class MysqlPSCreater extends PSCreaterBase {
         return ps;
     }
 
-    @Override
     public PreparedStatement createGetCount(Class<?> clazz, Connection conn, String condition, OutSQL sql) throws Exception {
         StringBuffer sbSql = new StringBuffer("SELECT COUNT(0) FROM ");
         sbSql.append(Common.getTableName(clazz));
@@ -345,7 +366,6 @@ public class MysqlPSCreater extends PSCreaterBase {
         return ps;
     }
 
-    @Override
     public <I> PreparedStatement createDeleteByIDS(Class<?> clazz, Connection conn, I[] ids, OutSQL sql) throws Exception {
         StringBuffer realSql = new StringBuffer();
         StringBuffer sbSql = new StringBuffer("DELETE FROM ");
@@ -387,7 +407,6 @@ public class MysqlPSCreater extends PSCreaterBase {
         return ps;
     }
 
-    @Override
     public <I> PreparedStatement createUpdateByID(Class<?> clazz, Connection conn, String updateStatement, I id, OutSQL sql) throws Exception {
 
         String idName = null;

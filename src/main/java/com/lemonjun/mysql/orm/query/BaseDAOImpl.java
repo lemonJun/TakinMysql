@@ -15,7 +15,7 @@ import com.lemonjun.mysql.orm.util.SqlInjectHelper;
 
 public class BaseDAOImpl extends AbstractDAO {
 
-    public BaseDAOImpl(IStatementCreater creater) {
+    public BaseDAOImpl(MysqlPSCreater creater) {
         super.psCreater = creater;
     }
 
