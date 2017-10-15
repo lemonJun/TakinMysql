@@ -137,7 +137,7 @@ public class CallableStatementWrapper extends PreparedStatementWrapper implement
     @Override
     public BigDecimal getBigDecimal(int parameterIndex, int scale) throws SQLException {
         try {
-            return this.internalCallableStatement.getBigDecimal(parameterIndex, scale);
+            return this.internalCallableStatement.getBigDecimal(parameterIndex);
         } catch (Throwable t) {
             throw this.connection.markPossiblyBroken(t);
         }

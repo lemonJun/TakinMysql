@@ -11,15 +11,16 @@ import java.util.List;
  */
 public interface IPreStatementDAO {
 
-    /**---------------------------的分页 -------------------*/
     public abstract <T> List<T> getListByPreSQL(Class<T> clazz, String sql, int timeOut, Object... param) throws Exception;
 
-    /**-------------------------如批量设置一个删除标记位-----------------*/
     public abstract int execByPreSQL(String sql, int timeOut, Object... param) throws Exception;
 
-    //通过preparedstatement 计数
     public abstract int countByPreSQL(String sql, int timeOut, Object... params) throws Exception;
+    
+    public int updateByPreSql(String sqlquery, int timeOut, Object... param) throws Exception;
 
-    public int updateByPreSql(String sql, int timeOut, Object... param) throws Exception;
+    public abstract <T> List<T> pageListByPreSql(Class<T> clazz, String sqlquery, int page, int pageSize, int timeOut, Object... params) throws Exception;
+
+    public int deleteByPreSql(String sqlquery, int timeOut, Object... param) throws Exception;
 
 }

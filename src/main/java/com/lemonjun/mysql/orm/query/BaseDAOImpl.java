@@ -53,27 +53,27 @@ public class BaseDAOImpl extends AbstractDAO {
     }
 
     @Override
-    public <T> List<T> getListByPreSQL(Class<T> clazz, String sql, int timeOut, Object... param) throws Exception {
+    public <T> List<T> getListByPreSQL(Class<T> clazz, String sqlquery, int timeOut, Object... params) throws Exception {
         Connection conn = null;
         ResultSet rs = null;
         PreparedStatement ps = null;
         List<T> dataList = null;
         try {
             conn = connHelper.getReadConnection();
-            ps = conn.prepareStatement(sql);
+            ps = conn.prepareStatement(sqlquery);
             ps.setQueryTimeout(timeOut);
 
-            if (param != null) {
-                for (int i = 0; i < param.length; i++) {
-                    Common.setPara(ps, param[i], i + 1);
+            if (params != null) {
+                for (int i = 0; i < params.length; i++) {
+                    Common.setPara(ps, params[i], i + 1);
                 }
             }
             long startTime = System.currentTimeMillis();
             rs = ps.executeQuery();
-            printlnSqlAndTime(sql, startTime);
+            printlnSqlAndTime(sqlquery, startTime);
             dataList = populateData(rs, clazz);
         } catch (Exception e) {
-            logger.error("getListByPreSQL error sql:" + sql, e);
+            logger.error("getListByPreSQL error sql:" + sqlquery, e);
             throw e;
         } finally {
             JdbcUitl.closeResultSet(rs);
@@ -111,14 +111,12 @@ public class BaseDAOImpl extends AbstractDAO {
     }
 
     @Override
-    public int updateByPreSql(String sql, int timeOut, Object... param) throws Exception {
+    public int updateByPreSql(String sqlquery, int timeOut, Object... param) throws Exception {
         Connection conn = null;
         PreparedStatement ps = null;
         try {
-            //conn = connHelper.getReadConnection();
-            //modify by haoxb 2012-09-27
             conn = connHelper.get();
-            ps = conn.prepareStatement(sql);
+            ps = conn.prepareStatement(sqlquery);
             ps.setQueryTimeout(timeOut);
 
             if (param != null) {
@@ -128,10 +126,37 @@ public class BaseDAOImpl extends AbstractDAO {
             }
             long startTime = System.currentTimeMillis();
             int result = ps.executeUpdate();
-            printlnSqlAndTime(sql, startTime);
+            printlnSqlAndTime(sqlquery, startTime);
             return result;
         } catch (SQLException e) {
-            logger.error("execByPreSQL error sql:" + sql, e);
+            logger.error("updateByPreSql error sql:" + sqlquery, e);
+            throw e;
+        } finally {
+            JdbcUitl.closeStatement(ps);
+            connHelper.release(conn);
+        }
+    }
+
+    @Override
+    public int deleteByPreSql(String sqlquery, int timeOut, Object... param) throws Exception {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            conn = connHelper.get();
+            ps = conn.prepareStatement(sqlquery);
+            ps.setQueryTimeout(timeOut);
+
+            if (param != null) {
+                for (int i = 0; i < param.length; i++) {
+                    Common.setPara(ps, param[i], i + 1);
+                }
+            }
+            long startTime = System.currentTimeMillis();
+            int result = ps.executeUpdate();
+            printlnSqlAndTime(sqlquery, startTime);
+            return result;
+        } catch (SQLException e) {
+            logger.error("deleteByPreSql error sql:" + sqlquery, e);
             throw e;
         } finally {
             JdbcUitl.closeStatement(ps);
@@ -380,7 +405,7 @@ public class BaseDAOImpl extends AbstractDAO {
                 count = rs.getInt(1);
             }
         } catch (Exception e) {
-            logger.error("countBySql error sql:" + sql.getSql(), e);
+            logger.error("countByWhere error sql:" + sql.getSql(), e);
             throw e;
         } finally {
             JdbcUitl.closeResultSet(rs);
@@ -392,9 +417,9 @@ public class BaseDAOImpl extends AbstractDAO {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public <T> List<T> pageListByWhere(Class<T> clazz, String condition, String columns, int page, int pageSize, String orderBy, int timeOut) throws Exception {
+    public <T> List<T> pageListByWhere(Class<T> clazz, String where, String columns, int page, int pageSize, String orderBy, int timeOut) throws Exception {
         columns = SqlInjectHelper.simpleFilterSql(columns);
-        condition = SqlInjectHelper.simpleFilterSql(condition);
+        where = SqlInjectHelper.simpleFilterSql(where);
         orderBy = SqlInjectHelper.simpleFilterSql(orderBy);
 
         Connection conn = null;
@@ -407,14 +432,14 @@ public class BaseDAOImpl extends AbstractDAO {
             //   conn = connHelper.get();
             conn = connHelper.getReadConnection();
 
-            ps = psCreater.createGetByPage(clazz, conn, condition, columns, page, pageSize, orderBy, sql);
+            ps = psCreater.createGetByPage(clazz, conn, where, columns, page, pageSize, orderBy, sql);
             ps.setQueryTimeout(timeOut);
             long startTime = System.currentTimeMillis();
             rs = ps.executeQuery();
             printlnSqlAndTime(sql.getRealSql(), startTime);
             dataList = populateData(rs, clazz);
         } catch (Exception e) {
-            logger.error("pageListBySql error sql:" + sql.getSql(), e);
+            logger.error("pageListByWhere error sql:" + sql.getSql(), e);
             throw e;
         } finally {
             JdbcUitl.closeResultSet(rs);
@@ -441,7 +466,7 @@ public class BaseDAOImpl extends AbstractDAO {
             printlnSqlAndTime(out.getRealSql(), startTime);
             return rows;
         } catch (Exception e) {
-            logger.error("updateBySql error sql:" + out.getSql(), e);
+            logger.error("updateByWhere error sql:" + out.getSql(), e);
             throw e;
         } finally {
             JdbcUitl.closeStatement(ps);
@@ -465,7 +490,7 @@ public class BaseDAOImpl extends AbstractDAO {
             printlnSqlAndTime(sql.getRealSql(), startTime);
             return rows;
         } catch (Exception e) {
-            logger.error("deleteBySql error sql:" + sql.getSql(), e);
+            logger.error("deleteByWhere error sql:" + sql.getSql(), e);
             throw e;
         } finally {
             JdbcUitl.closeStatement(ps);
@@ -495,7 +520,7 @@ public class BaseDAOImpl extends AbstractDAO {
             printlnSqlAndTime(sql.getRealSql(), startTime);
             dataList = populateData(rs, clazz);
         } catch (SQLException e) {
-            logger.error("getListBySql error sql:" + sql.getSql(), e);
+            logger.error("getListByWhere error sql:" + sql.getSql(), e);
             throw e;
         } finally {
             JdbcUitl.closeResultSet(rs);
@@ -549,7 +574,7 @@ public class BaseDAOImpl extends AbstractDAO {
             printlnSqlAndTime(sql.getRealSql(), startTime);
             return rows;
         } catch (SQLException e) {
-            logger.error("getListBySql error sql:" + sql.getSql(), e);
+            logger.error("execBySQL error sql:" + sql.getSql(), e);
             throw e;
         } finally {
             JdbcUitl.closeResultSet(rs);
@@ -576,7 +601,44 @@ public class BaseDAOImpl extends AbstractDAO {
             printlnSqlAndTime(sql.getRealSql(), startTime);
             dataList = populateData(rs, clazz);
         } catch (SQLException e) {
-            logger.error("getListBySql error sql:" + sql.getSql(), e);
+            logger.error("getListByConditionForUpdate error sql:" + sql.getSql(), e);
+            throw e;
+        } finally {
+            JdbcUitl.closeResultSet(rs);
+            JdbcUitl.closeStatement(ps);
+            connHelper.release(conn);
+        }
+        return dataList;
+    }
+
+    @Override
+    public <T> List<T> pageListByPreSql(Class<T> clazz, String sqlquery, int page, int pageSize, int timeOut, Object... params) throws Exception {
+        Connection conn = null;
+        ResultSet rs = null;
+        PreparedStatement ps = null;
+        List<T> dataList = null;
+        try {
+            conn = connHelper.getReadConnection();
+            int offset = pageSize * (page - 1);
+            StringBuffer sbSql = new StringBuffer(sqlquery);
+            sbSql.append(" LIMIT ");
+            sbSql.append(offset);
+            sbSql.append(",");
+            sbSql.append(pageSize);
+            ps = conn.prepareStatement(sbSql.toString());
+            ps.setQueryTimeout(timeOut);
+
+            if (params != null) {
+                for (int i = 0; i < params.length; i++) {
+                    Common.setPara(ps, params[i], i + 1);
+                }
+            }
+            long startTime = System.currentTimeMillis();
+            rs = ps.executeQuery();
+            printlnSqlAndTime(sqlquery, startTime);
+            dataList = populateData(rs, clazz);
+        } catch (Exception e) {
+            logger.error("getListByPreSQL error sql:" + sqlquery, e);
             throw e;
         } finally {
             JdbcUitl.closeResultSet(rs);

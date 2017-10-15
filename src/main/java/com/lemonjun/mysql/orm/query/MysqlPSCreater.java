@@ -63,7 +63,6 @@ public class MysqlPSCreater {
     }
 
     public PreparedStatement createUpdateByCustom(Class<?> clazz, Connection conn, String updateStatement, String condition, OutSQL sql) throws Exception {
-
         StringBuffer sbSql = new StringBuffer("UPDATE ");
         sbSql.append(Common.getTableName(clazz));
         sbSql.append(" SET ");

@@ -64,7 +64,7 @@ public class DBTemplateClient implements DBOperations {
     }
 
     @Override
-    public int updateByWhere(Class<?> clazz, String updateStatement, String condition) throws Exception {
+    public int updateByCondition(Class<?> clazz, String updateStatement, String condition) throws Exception {
         return sql.updateByWhere(clazz, updateStatement, condition, insertUpdateTimeOut);
     }
 
@@ -221,13 +221,13 @@ public class DBTemplateClient implements DBOperations {
     }
 
     @Override
-    public int updateByPreSql(Class<?> clazz, String sql, Object... param) throws Exception {
-        return 0;
+    public int updateByPreSql(String sqlquery, Object... params) throws Exception {
+        return presql.updateByPreSql(sqlquery, qurryTimeOut, params);
     }
 
     @Override
-    public int deleteByPreWhere(Class<?> clazz, String where, Object... param) throws Exception {
-        return 0;
+    public int deleteByPreWhere(String sqlquery, Object... params) throws Exception {
+        return presql.deleteByPreSql(sqlquery, qurryTimeOut, params);
     }
 
     @Override
@@ -236,8 +236,8 @@ public class DBTemplateClient implements DBOperations {
     }
 
     @Override
-    public <T> List<T> pageListByPreSql(Class<T> clazz, String sql, int page, int pageSize, Object... param) throws Exception {
-        return null;
+    public <T> List<T> pageListByPreSql(Class<T> clazz, String sqlquery, int page, int pageSize, Object... params) throws Exception {
+        return presql.pageListByPreSql(clazz, sqlquery, page, pageSize, qurryTimeOut, params);
     }
 
     @Override
