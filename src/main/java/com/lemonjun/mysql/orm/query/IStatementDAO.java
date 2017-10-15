@@ -30,7 +30,7 @@ public interface IStatementDAO {
 
     public <I> int deleteByIDS(Class<?> clazz, I[] ids, int timeOut) throws Exception;
 
-    public int deleteByWhere(Class<?> clazz, String condition, int timeOut) throws Exception;
+    public int deleteByWhere(Class<?> clazz, String condition, String limit, int timeOut) throws Exception;
 
     public <I> Object getById(Class<?> clazz, I id, int timeOut) throws Exception;
 
@@ -41,6 +41,8 @@ public interface IStatementDAO {
 
     public <T> List<T> getListBySql(Class<T> clazz, String sqlquery, int timeOut) throws Exception;
 
+    public abstract <T> List<T> getListByConditionForUpdate(Class<T> clazz, String condition, int timeOut) throws Exception;
+
     /**-------------------带条件语句的分页--------------------*/
 
     public <T> List<T> pageListByWhere(Class<T> clazz, String condition, String columns, int page, int pageSize, String orderBy, int timeOut) throws Exception;
@@ -48,5 +50,7 @@ public interface IStatementDAO {
     /**--------------------------计数类接口-----------------------------*/
     //自已拼sql实现 计数
     public abstract int countByWhere(Class<?> clazz, String condition, int timeOut) throws Exception;
+
+    public abstract int execBySQL(String sqlquery, int timeOut) throws Exception;
 
 }

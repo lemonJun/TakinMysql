@@ -102,4 +102,8 @@ public class ConnectionHelper {
         threadLocal.set(null);
     }
 
+    public AbstractDataSource getConnPool() {
+        return connPool;
+    }
+
 }

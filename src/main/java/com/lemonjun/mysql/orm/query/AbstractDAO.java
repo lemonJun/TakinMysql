@@ -43,7 +43,7 @@ public abstract class AbstractDAO implements IStatementDAO, IPreStatementDAO {
     /**
      * 默认是否输出执行SQL和执行时间
      */
-    protected boolean printlnSqlAndTime = true;
+    public boolean printlnSqlAndTime = true;
 
     protected static final Logger logger = Logger.getLogger(AbstractDAO.class);
 
@@ -114,10 +114,14 @@ public abstract class AbstractDAO implements IStatementDAO, IPreStatementDAO {
         return dataList;
     }
 
+    public void setPrintlnSqlAndTime(boolean printlnSqlAndTime) {
+        this.printlnSqlAndTime = printlnSqlAndTime;
+    }
+
     //此处应该用stopwatch
     public void printlnSqlAndTime(String sql, long stime) {
         if (printlnSqlAndTime) {
-            logger.info("Sql: " + sql + " Time: " + (System.currentTimeMillis() - stime) + " ms");
+            logger.info("sql: " + sql + " use:" + (System.currentTimeMillis() - stime) + " ms");
         }
     }
 

@@ -450,14 +450,14 @@ public class BaseDAOImpl extends AbstractDAO {
     }
 
     @Override
-    public int deleteByWhere(Class<?> clazz, String where, int timeOut) throws Exception {
+    public int deleteByWhere(Class<?> clazz, String where, String limit, int timeOut) throws Exception {
         where = SqlInjectHelper.simpleFilterSql(where);
         Connection conn = null;
         PreparedStatement ps = null;
         OutSQL sql = new OutSQL();
         try {
             conn = connHelper.get();
-            ps = psCreater.createDeleteByCustom(clazz, conn, where, sql);
+            ps = psCreater.createDeleteByCustom(clazz, conn, where, limit, sql);
             ps.setQueryTimeout(timeOut);
             long startTime = System.currentTimeMillis();
             //            ps.execute();
@@ -508,7 +508,6 @@ public class BaseDAOImpl extends AbstractDAO {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public <T> List<T> getListBySql(Class<T> clazz, String sqlquery, int timeOut) throws Exception {
-
         Connection conn = null;
         ResultSet rs = null;
         PreparedStatement ps = null;
@@ -517,6 +516,59 @@ public class BaseDAOImpl extends AbstractDAO {
         try {
             conn = connHelper.getReadConnection();
             ps = conn.prepareStatement(sqlquery);
+
+            ps.setQueryTimeout(timeOut);
+            long startTime = System.currentTimeMillis();
+            rs = ps.executeQuery();
+            printlnSqlAndTime(sql.getRealSql(), startTime);
+            dataList = populateData(rs, clazz);
+        } catch (SQLException e) {
+            logger.error("getListBySql error sql:" + sql.getSql(), e);
+            throw e;
+        } finally {
+            JdbcUitl.closeResultSet(rs);
+            JdbcUitl.closeStatement(ps);
+            connHelper.release(conn);
+        }
+        return dataList;
+    }
+
+    @Override
+    public int execBySQL(String sqlquery, int timeOut) throws Exception {
+        Connection conn = null;
+        ResultSet rs = null;
+        PreparedStatement ps = null;
+        OutSQL sql = new OutSQL();
+        try {
+            conn = connHelper.getReadConnection();
+            ps = conn.prepareStatement(sqlquery);
+
+            ps.setQueryTimeout(timeOut);
+            long startTime = System.currentTimeMillis();
+            int rows = ps.executeUpdate();
+            printlnSqlAndTime(sql.getRealSql(), startTime);
+            return rows;
+        } catch (SQLException e) {
+            logger.error("getListBySql error sql:" + sql.getSql(), e);
+            throw e;
+        } finally {
+            JdbcUitl.closeResultSet(rs);
+            JdbcUitl.closeStatement(ps);
+            connHelper.release(conn);
+        }
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Override
+    public <T> List<T> getListByConditionForUpdate(Class<T> clazz, String condition, int timeOut) throws Exception {
+        Connection conn = null;
+        ResultSet rs = null;
+        PreparedStatement ps = null;
+        List dataList = null;
+        OutSQL sql = new OutSQL();
+        try {
+            conn = connHelper.getReadConnection();
+            ps = psCreater.createGetByConditionForUpdate(clazz, conn, condition, sql);
 
             ps.setQueryTimeout(timeOut);
             long startTime = System.currentTimeMillis();

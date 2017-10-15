@@ -29,7 +29,7 @@ public interface DBOperations {
     public abstract <I> int deleteByIDS(Class<?> clazz, I[] ids) throws Exception;
 
     @Deprecated
-    public abstract int deleteByWhere(Class<?> clazz, String where) throws Exception;
+    public abstract int deleteByWhere(Class<?> clazz, String where, String limit) throws Exception;
 
     public abstract int deleteByPreWhere(Class<?> clazz, String where, Object... param) throws Exception;
 
@@ -44,6 +44,8 @@ public interface DBOperations {
 
     @Deprecated
     public abstract <T> List<T> getListBySql(Class<T> clazz, String sql) throws Exception;
+
+    public abstract <T> List<T> getListByConditionForUpdate(Class<T> clazz, String condition) throws Exception;
 
     public abstract <T> List<T> getListByPreSQL(Class<T> clazz, String sql, Object... params) throws Exception;
 

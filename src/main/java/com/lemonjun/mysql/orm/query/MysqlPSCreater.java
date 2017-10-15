@@ -43,7 +43,7 @@ public class MysqlPSCreater {
         return ps;
     }
 
-    public PreparedStatement createDeleteByCustom(Class<?> clazz, Connection conn, String condition, OutSQL sql) throws Exception {
+    public PreparedStatement createDeleteByCustom(Class<?> clazz, Connection conn, String condition, String limit, OutSQL sql) throws Exception {
 
         StringBuffer sbSql = new StringBuffer("DELETE FROM ");
         sbSql.append(Common.getTableName(clazz));
@@ -52,6 +52,9 @@ public class MysqlPSCreater {
             condition = "1=2";
         }
         sbSql.append(condition);
+        if (StringUtils.isEmpty(limit)) {
+            sbSql.append(" LIMIT ").append(limit);
+        }
 
         sql.setSql(sbSql.toString());
         sql.setRealSql(sbSql.toString());
@@ -433,6 +436,23 @@ public class MysqlPSCreater {
         sql.setRealSql(realSql.toString());
         PreparedStatement ps = conn.prepareStatement(sql.getSql());
         Common.setPara(ps, id, 1);
+        return ps;
+    }
+
+    public PreparedStatement createGetByConditionForUpdate(Class<?> clazz, Connection conn, String condition, OutSQL sql) throws Exception {
+        StringBuffer sbSql = new StringBuffer("SELECT ");
+        sbSql.append("*");
+        sbSql.append(" FROM ");
+        sbSql.append(Common.getTableName(clazz));
+        if (condition != null && !condition.trim().equals("")) {
+            sbSql.append(" WHERE ");
+            sbSql.append(condition);
+        }
+        sbSql.append(" for update");
+
+        sql.setSql(sbSql.toString());
+        sql.setRealSql(sbSql.toString());
+        PreparedStatement ps = conn.prepareStatement(sql.getSql());
         return ps;
     }
 

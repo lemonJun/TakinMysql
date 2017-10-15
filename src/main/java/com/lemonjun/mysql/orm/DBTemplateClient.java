@@ -79,8 +79,8 @@ public class DBTemplateClient implements DBOperations {
     }
 
     @Override
-    public int deleteByWhere(Class<?> clazz, String where) throws Exception {
-        return sql.deleteByWhere(clazz, where, insertUpdateTimeOut);
+    public int deleteByWhere(Class<?> clazz, String where, String limit) throws Exception {
+        return sql.deleteByWhere(clazz, where, limit, insertUpdateTimeOut);
     }
 
     @Override
@@ -242,7 +242,32 @@ public class DBTemplateClient implements DBOperations {
 
     @Override
     public int execBySQL(String sqlquery) throws Exception {
-        return 0;
+        return sql.execBySQL(sqlquery, qurryTimeOut);
+    }
+
+    @Override
+    public <T> List<T> getListByConditionForUpdate(Class<T> clazz, String condition) throws Exception {
+        return sql.getListByConditionForUpdate(clazz, condition, qurryTimeOut);
+    }
+
+    public int getQurryTimeOut() {
+        return qurryTimeOut;
+    }
+
+    public void setQurryTimeOut(int qurryTimeOut) {
+        this.qurryTimeOut = qurryTimeOut;
+    }
+
+    public int getInsertUpdateTimeOut() {
+        return insertUpdateTimeOut;
+    }
+
+    public void setInsertUpdateTimeOut(int insertUpdateTimeOut) {
+        this.insertUpdateTimeOut = insertUpdateTimeOut;
+    }
+
+    public ConnectionHelper getConnHelper() {
+        return connHelper;
     }
 
 }
